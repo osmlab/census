@@ -29,15 +29,20 @@ var source = new mapboxgl.GeoJSONSource({
 });
 
 map.on('load', function () {
-    map.addSource('drone', source);
-    map.addLayer({
+    map.addSource('results', source);
+    /* map.addLayer({
         "id": "drone",
         "type": "symbol",
         "source": "drone",
         "layout": {
             "icon-image": "rocket-15"
         }
-    });
+    }); */
+    map.addLayer({
+      "id": "results-tiles",
+      "type": "fill",
+      "source": "results"
+    })
 });
 </script>
 
