@@ -1,12 +1,15 @@
 <html>
-	<head>
-		<script src="https://code.jquery.com/jquery-latest.min.js"></script>
-	</head>
+  <head>
+    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  </head>
 
-	<body>
-		<form id="form">
-			osmusername <input id="username" type="text" name="username" placeholder="username..." /><br/>
-      Home Location <input id="zip" type="text" name="zip" placeholder="zip..." /><br/>
+  <body>
+    <form id="form" action="" method="POST">
+      osmusername <input id="username" type="text" name="username" placeholder="username..." /><br/>
+      <input id="w" type="hidden" name="w"/>
+      <input id="s" type="hidden" name="s"/>
+      <input id="e" type="hidden" name="e"/>
+      <input id="n" type="hidden" name="n"/>
       Gender  <input type="radio" name="gender" value="male"> Male
         <input type="radio" name="gender" value="female"> Female
         <input type="radio" name="gender" value="other"> Other<br/>
@@ -28,43 +31,53 @@
       Would you be interested in participating in a larger survey regarding OSM demographics and motivations?
         <input type="radio" name="more" value="yes">yes
         <input type="radio" name="more" value="yes">no<br/>
-			<input id="input" type="submit" name="submit" value="Post It" />
-		</form>
+        <input id="input" type="submit" name="submit" value="Post It" />
+    </form>
 
-		<div id="result"></div>
+    <iframe src="geocode.html" width="600" height="450"/>
 
-		<script>
-			$.ajaxSetup({
-				contentType: "application/json; charset=utf-8",
-				dataType: "json"
-			});
-			$(document).ready(function(){
-				$('#input').click(function() {
+    <div id="result"></div>
+
+    <script>
+      $.ajaxSetup({
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"
+      });
+    //  $(document).ready(function(){
+        console.log('document ready');
+        $('#form').submit(function(event) {
+          event.preventDefault();
           var send = {};
           $("#form").serializeArray().forEach(  function(obj) {
              send[obj['name']] = obj['value'];
           });
-					$.ajax({
-						url: "https://tbnjg3ennk.execute-api.us-east-1.amazonaws.com/api/entry",
-						type: "POST",
-						data: JSON.stringify(send),
-						error: function(xhr, error) {
-							alert('Error!  Status = ' + xhr.status + ' Message = ' + error);
-						},
-						success: function(data) {
+          $.ajax({
+            url: "https://tbnjg3ennk.execute-api.us-east-1.amazonaws.com/api/entry",
+            type: "POST",
+            data: JSON.stringify(send),
+            error: function(xhr, error) {
+              alert('Error!  Status = ' + xhr.status + ' Message = ' + error);
+            },
+            success: function(data) {
               window.location = "result.html";
               return;
-							//have you service return the created object
-							var items = [];
-							items.push('<table cellpadding="4" cellspacing="4">');
-							items.push('<tr><td>name</td><td>' + data.properties.username + '</td></tr>');
-							items.push('</table>');
-							$('#result').html(items.join(''));
-						}
-					});
-					return false;
-				});
-			});
-		</script>
-	</body>
+              //have you service return the created object
+              var items = [];
+              items.push('<table cellpadding="4" cellspacing="4">');
+              items.push('<tr><td>name</td><td>' + data.properties.username + '</td></tr>');
+              items.push('</table>');
+              $('#result').html(items.join(''));
+            }
+          });
+          return false;
+        });
+        function setLocationInForm(bbox) {
+          $('#w').val(bbox[0]);
+          $('#s').val(bbox[1]);
+          $('#e').val(bbox[2]);
+          $('#n').val(bbox[3]);
+        }
+    //  });
+    </script>
+  </body>
 </html>
