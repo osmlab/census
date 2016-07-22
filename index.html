@@ -1,0 +1,70 @@
+<html>
+	<head>
+		<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	</head>
+
+	<body>
+		<form id="form">
+			osmusername <input id="username" type="text" name="username" placeholder="username..." /><br/>
+      Home Location <input id="zip" type="text" name="zip" placeholder="zip..." /><br/>
+      Gender  <input type="radio" name="gender" value="male"> Male
+        <input type="radio" name="gender" value="female"> Female
+        <input type="radio" name="gender" value="other"> Other<br/>
+      Age <input type="radio" name="age" value="18-19"> 18-19
+        <input type="radio" name="age" value="20-24"> 20-24
+        <input type="radio" name="age" value="25-29"> 25-29
+        <input type="radio" name="age" value="30-34"> 30-34
+        <input type="radio" name="age" value="35-39"> 35-39
+        <input type="radio" name="age" value="40-44"> 40-44
+        <input type="radio" name="age" value="45-49"> 45-49
+        <input type="radio" name="age" value="50-54"> 50-54
+        <input type="radio" name="age" value="55-59"> 55-59
+        <input type="radio" name="age" value="60-64"> 60-64
+        <input type="radio" name="age" value="65+"> 65+<br/>
+      Do you use OSM in your everyday life?
+        <input type="radio" name="use" value="yes-work">yes, for work
+        <input type="radio" name="use" value="yes-personal">yes, for personal use
+        <input type="radio" name="use" value="no"> no<br/>
+      Would you be interested in participating in a larger survey regarding OSM demographics and motivations?
+        <input type="radio" name="more" value="yes">yes
+        <input type="radio" name="more" value="yes">no<br/>
+			<input id="input" type="submit" name="submit" value="Post It" />
+		</form>
+
+		<div id="result"></div>
+
+		<script>
+			$.ajaxSetup({
+				contentType: "application/json; charset=utf-8",
+				dataType: "json"
+			});
+			$(document).ready(function(){
+				$('#input').click(function() {
+          var send = {};
+          $("#form").serializeArray().forEach(  function(obj) {
+             send[obj['name']] = obj['value'];
+          });
+					$.ajax({
+						url: "https://tbnjg3ennk.execute-api.us-east-1.amazonaws.com/api/entry",
+						type: "POST",
+						data: JSON.stringify(send),
+						error: function(xhr, error) {
+							alert('Error!  Status = ' + xhr.status + ' Message = ' + error);
+						},
+						success: function(data) {
+              window.location = "result.html";
+              return;
+							//have you service return the created object
+							var items = [];
+							items.push('<table cellpadding="4" cellspacing="4">');
+							items.push('<tr><td>name</td><td>' + data.properties.username + '</td></tr>');
+							items.push('</table>');
+							$('#result').html(items.join(''));
+						}
+					});
+					return false;
+				});
+			});
+		</script>
+	</body>
+</html>
