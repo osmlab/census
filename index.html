@@ -1,6 +1,7 @@
 <html>
   <head>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+    <script src="http://malsup.github.io/jquery.blockUI.js"></script>
     <script>
       $.ajaxSetup({
         contentType: "application/json; charset=utf-8",
@@ -9,6 +10,7 @@
       $(document).ready(function(){
         $('#form').submit(function(event) {
           event.preventDefault();
+          $.blockUI({ message: '<h1>Posting your response...</h1>' }); 
           var send = {};
           $("#form").serializeArray().forEach(  function(obj) {
              send[obj['name']] = obj['value'];
@@ -41,40 +43,164 @@
         $('#n').val(bbox[3]);
       }
     </script>
+    <style type="text/css">
+.form-style-5{
+    max-width: 500px;
+    padding: 10px 20px;
+    background: #f4f7f8;
+    margin: 10px auto;
+    padding: 20px;
+    background: #f4f7f8;
+    border-radius: 8px;
+    font-family: Georgia, "Times New Roman", Times, serif;
+}
+.form-style-5 fieldset{
+    border: none;
+}
+.form-style-5 legend {
+    font-size: 1.4em;
+    margin-bottom: 10px;
+}
+.form-style-5 label {
+    display: block;
+    margin-bottom: 8px;
+}
+.form-style-5 input[type="text"],
+.form-style-5 input[type="date"],
+.form-style-5 input[type="datetime"],
+.form-style-5 input[type="email"],
+.form-style-5 input[type="number"],
+.form-style-5 input[type="search"],
+.form-style-5 input[type="time"],
+.form-style-5 input[type="url"],
+.form-style-5 textarea,
+.form-style-5 select {
+    font-family: Georgia, "Times New Roman", Times, serif;
+    background: rgba(255,255,255,.1);
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    margin: 0;
+    outline: 0;
+    padding: 7px;
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    background-color: #e8eeef;
+    color:#8a97a0;
+    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
+    margin-bottom: 30px;
+
+}
+.form-style-5 input[type="text"]:focus,
+.form-style-5 input[type="date"]:focus,
+.form-style-5 input[type="datetime"]:focus,
+.form-style-5 input[type="email"]:focus,
+.form-style-5 input[type="number"]:focus,
+.form-style-5 input[type="search"]:focus,
+.form-style-5 input[type="time"]:focus,
+.form-style-5 input[type="url"]:focus,
+.form-style-5 textarea:focus,
+.form-style-5 select:focus{
+    background: #d2d9dd;
+}
+.form-style-5 select{
+    -webkit-appearance: menulist-button;
+    height:35px;
+}
+.form-style-5 .number {
+    background: #1abc9c;
+    color: #fff;
+    height: 30px;
+    width: 30px;
+    display: inline-block;
+    font-size: 0.8em;
+    margin-right: 4px;
+    line-height: 30px;
+    text-align: center;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+    border-radius: 15px 15px 15px 0px;
+}
+
+.form-style-5 input[type="submit"],
+.form-style-5 input[type="button"]
+{
+    position: relative;
+    display: block;
+    padding: 19px 39px 18px 39px;
+    color: #FFF;
+    margin: 0 auto;
+    background: #1abc9c;
+    font-size: 18px;
+    text-align: center;
+    font-style: normal;
+    width: 100%;
+    border: 1px solid #16a085;
+    border-width: 1px 1px 3px;
+    margin-bottom: 10px;
+}
+.form-style-5 input[type="submit"]:hover,
+.form-style-5 input[type="button"]:hover
+{
+    background: #109177;
+}
+</style>
   </head>
 
   <body>
+    <div class="form-style-5">
     <form id="form" action="" method="POST">
-      osmusername <input id="username" type="text" name="username" placeholder="username..." /><br/>
-      <input id="w" type="hidden" name="w"/>
-      <input id="s" type="hidden" name="s"/>
-      <input id="e" type="hidden" name="e"/>
-      <input id="n" type="hidden" name="n"/>
-      Gender  <input type="radio" name="gender" value="male"> Male
-        <input type="radio" name="gender" value="female"> Female
-        <input type="radio" name="gender" value="other"> Other<br/>
-      Age <input type="radio" name="age" value="18-19"> 18-19
-        <input type="radio" name="age" value="20-24"> 20-24
-        <input type="radio" name="age" value="25-29"> 25-29
-        <input type="radio" name="age" value="30-34"> 30-34
-        <input type="radio" name="age" value="35-39"> 35-39
-        <input type="radio" name="age" value="40-44"> 40-44
-        <input type="radio" name="age" value="45-49"> 45-49
-        <input type="radio" name="age" value="50-54"> 50-54
-        <input type="radio" name="age" value="55-59"> 55-59
-        <input type="radio" name="age" value="60-64"> 60-64
-        <input type="radio" name="age" value="65+"> 65+<br/>
-      Do you use OSM in your everyday life?
-        <input type="radio" name="use" value="yes-work">yes, for work
-        <input type="radio" name="use" value="yes-personal">yes, for personal use
-        <input type="radio" name="use" value="no"> no<br/>
-      Would you be interested in participating in a larger survey regarding OSM demographics and motivations?
-        <input type="radio" name="more" value="yes">yes
-        <input type="radio" name="more" value="yes">no<br/>
-        <input id="input" type="submit" name="submit" value="Post It" />
+      <fieldset>
+        <legend>OpenStreetMap US Census</legend>
+        <input id="username" type="text" name="username" placeholder="OSM username" />
+        <legend>Gender</legend>
+        <select id="gender" name="gender">
+          <option value=""></option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+        <legend>Age</legend>
+        <select id="age" name="age">
+          <option value=""></option>
+          <option value="18-19">18-19</option>
+          <option value="20-24">20-24</option>
+          <option value="25-29">25-29</option>
+          <option value="30-34">30-34</option>
+          <option value="35-39">35-39</option>
+          <option value="40-44">40-44</option>
+          <option value="45-49">45-49</option>
+          <option value="50-54">50-54</option>
+          <option value="55-59">55-59</option>
+          <option value="60-64">60-64</option>
+          <option value="65+">65+</option>
+        </select>
+        <legend>Do you use OSM in your everyday life?</legend>
+        <select id="use" name="use">
+          <option value=""></option>
+          <option value="yes-work">yes, for work</option>
+          <option value="yes-personal">yes, for personal use</option>
+          <option value="no">no</option>
+        </select>
+        <legend>Would you be interested in participating in a larger survey regarding OSM demographics and motivations?</legend>
+        <select id="more" name="more">
+          <option value=""></option>
+          <option value="yes">yes</option>
+          <option value="yes">no</option>
+        </select>
+        <input id="w" type="hidden" name="w"/>
+        <input id="s" type="hidden" name="s"/>
+        <input id="e" type="hidden" name="e"/>
+        <input id="n" type="hidden" name="n"/>
+        <legend>Search and position the location to your "local tile"</legend>
+      </fieldset>
+      <iframe src="geocode.html" width="100%" height="450"></iframe>
+      <input id="input" type="submit" name="submit" value="Post It" />
     </form>
+    </div>
 
-    <iframe src="geocode.html" width="600" height="450"/>
 
     <div id="result"></div>
 

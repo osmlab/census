@@ -15,6 +15,8 @@ var geocoder = new mapboxgl.Geocoder({
 
 map.addControl(geocoder);
 
+map.addControl(new mapboxgl.Navigation());
+
 // After the map style has loaded on the page, add a source layer and default
 // styling for a single point.
 map.on('load', function() {
