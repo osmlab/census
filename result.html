@@ -9,6 +9,10 @@
     <style>
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
+        .mapboxgl-popup {
+          max-width: 400px;
+          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -20,7 +24,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibWlrZWxtYXJvbiIsImEiOiJjaWZlY25lZGQ2cTJjc2trb
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
-    zoom: 0
+    zoom: 4,
+    center: [-97.559, 39.368]
 });
 
 var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
@@ -33,8 +38,31 @@ map.on('load', function () {
     map.addLayer({
       "id": "results-tiles",
       "type": "fill",
-      "source": "results"
+      "source": "results",
+      "paint": {
+        "fill-color": "#990000",
+        "fill-opacity": .5
+      }
     })
+});
+
+map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
+    if (!features.length) {
+        return;
+    }
+
+    var feature = features[0];
+
+    var popup = new mapboxgl.Popup()
+        .setLngLat(map.unproject(e.point))
+        .setHTML('<pre>' + JSON.stringify(feature.properties,null,2) + '</pre>')
+        .addTo(map);
+});
+
+map.on('mousemove', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
+    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 });
 </script>
 
