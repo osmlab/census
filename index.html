@@ -1,7 +1,7 @@
 <html>
   <head>
     <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="http://malsup.github.io/jquery.blockUI.js"></script>
+    <script src="https://malsup.github.io/jquery.blockUI.js"></script>
     <script>
       $.ajaxSetup({
         contentType: "application/json; charset=utf-8",
@@ -10,7 +10,7 @@
       $(document).ready(function(){
         $('#form').submit(function(event) {
           event.preventDefault();
-          $.blockUI({ message: '<h1>Posting your response...</h1>' }); 
+          $.blockUI({ message: '<h1>Posting your response...</h1>' });
           var send = {};
           $("#form").serializeArray().forEach(  function(obj) {
              send[obj['name']] = obj['value'];
