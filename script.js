@@ -55,46 +55,6 @@ map.on('load', function() {
         }
     });
 
-
-    function drawTile(coords) {
-      var tilebelt = require('tilebelt');
-      var bbox = tilebelt.tileToBBOX(tilebelt.pointToTile(coords[0], coords[1], 12));
-      var w = bbox[0]; var s = bbox[1]; var e = bbox[2]; var n = bbox[3];
-      polygon_geojson.features[0].geometry.coordinates = [[[w,s], [w,n], [e,n], [e,s], [w,s] ]];
-      map.getSource('tile-polygon').setData(polygon_geojson);
-      return bbox;
-    }
-
-    // Listen for the `geocoder.input` event that is triggered when a user
-    // makes a selection and add a symbol that matches the result.
-    geocoder.on('result', function(ev) {
-        map.getSource('single-point').setData(ev.result.geometry);
-        var bbox = drawTile(ev.result.geometry.coordinates);
-        parent.setLocationInForm(bbox);
-    });
-
-
-    var isDragging;
-
-    // Is the cursor over a point? if this
-    // flag is active, we listen for a mousedown event.
-    var isCursorOverPoint;
-
-    var canvas = map.getCanvasContainer();
-
-    function mouseDown() {
-        if (!isCursorOverPoint) return;
-
-        isDragging = true;
-
-        // Set a cursor indicator
-        canvas.style.cursor = 'grab';
-
-        // Mouse events
-        map.on('mousemove', onMove);
-        map.on('mouseup', onUp);
-    }
-
     var point_geojson = {
         "type": "FeatureCollection",
         "features": [{
@@ -117,6 +77,60 @@ map.on('load', function() {
         }]
     };
 
+    function drawTile(coords) {
+      var tilebelt = require('tilebelt');
+      var bbox = tilebelt.tileToBBOX(tilebelt.pointToTile(coords[0], coords[1], 12));
+      var w = bbox[0]; var s = bbox[1]; var e = bbox[2]; var n = bbox[3];
+      polygon_geojson.features[0].geometry.coordinates = [[[w,s], [w,n], [e,n], [e,s], [w,s] ]];
+      map.getSource('tile-polygon').setData(polygon_geojson);
+      return bbox;
+    }
+
+    var flying = false;
+    // Listen for the `geocoder.input` event that is triggered when a user
+    // makes a selection and add a symbol that matches the result.
+    geocoder.on('result', function(ev) {
+        flying = true;
+        map.getSource('single-point').setData(ev.result.geometry);
+        var bbox = drawTile(ev.result.geometry.coordinates);
+        parent.setLocationInForm(bbox);
+    });
+
+    map.on('moveend', function(e){
+       if(flying){
+         var coords = [map.getCenter().lng, map.getCenter().lat];
+         point_geojson.features[0].geometry.coordinates = coords;
+         map.getSource('single-point').setData(point_geojson);
+         var bbox = drawTile(coords);
+         parent.setLocationInForm(bbox);
+         flying=false;
+       }
+    });
+    var isDragging;
+
+    // Is the cursor over a point? if this
+    // flag is active, we listen for a mousedown event.
+    var isCursorOverPoint;
+
+    var canvas = map.getCanvasContainer();
+
+    map.on('mouseup', onUp);
+
+    function mouseDown() {
+        if (!isCursorOverPoint) return;
+
+        isDragging = true;
+
+        // Set a cursor indicator
+        canvas.style.cursor = 'grab';
+
+        // Mouse events
+        map.on('mousemove', onMove);
+        map.on('mouseup', onUp);
+    }
+
+
+
     function onMove(e) {
         if (!isDragging) return;
         var coords = e.lngLat;
@@ -131,9 +145,12 @@ map.on('load', function() {
     }
 
     function onUp(e) {
-        if (!isDragging) return;
-        var coords = e.lngLat;
+        if(flying) return;
 
+        //if (!isDragging) return;
+        var coords = e.lngLat;
+        point_geojson.features[0].geometry.coordinates = [coords.lng, coords.lat];
+        map.getSource('single-point').setData(point_geojson);
         // Print the coordinates of where the point had
         // finished being dragged to on the map.
         //coordinates.style.display = 'block';
@@ -142,13 +159,13 @@ map.on('load', function() {
 
         var bbox = drawTile([coords.lng, coords.lat]);
         parent.setLocationInForm(bbox);
-        canvas.style.cursor = '';
-        isDragging = false;
+        //canvas.style.cursor = '';
+        //isDragging = false;
     }
 
     // If a feature is found on map movement,
     // set a flag to permit a mousedown events.
-    map.on('mousemove', function(e) {
+    /* map.on('mousemove', function(e) {
       var features = map.queryRenderedFeatures(e.point, { layers: ['point'] });
 
       // Change point and cursor style as a UI indicator
@@ -164,11 +181,11 @@ map.on('load', function() {
         isCursorOverPoint = false;
         map.dragPan.enable();
       }
-    });
+    }); */
 
     // Set `true` to dispatch the event before other functions call it. This
     // is necessary for disabling the default map dragging behaviour.
-    map.on('mousedown', mouseDown, true);
+    //map.on('mousedown', mouseDown, true);
 
 });
 

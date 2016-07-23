@@ -16,7 +16,7 @@
              send[obj['name']] = obj['value'];
           });
           $.ajax({
-            url: "https://tbnjg3ennk.execute-api.us-east-1.amazonaws.com/api/entry",
+            url: "https://pg8j0s61j2.execute-api.us-east-1.amazonaws.com/api/entry",
             type: "POST",
             data: JSON.stringify(send),
             error: function(xhr, error) {
@@ -45,7 +45,7 @@
     </script>
     <style type="text/css">
 .form-style-5{
-    max-width: 500px;
+    max-width: 100%; /*500px;*/
     padding: 10px 20px;
     background: #f4f7f8;
     margin: 10px auto;
