@@ -41,23 +41,22 @@ map.on('load', function () {
       "type": "line",
       "source": "results",
       "minzoom":3,
-      "maxzoom":7,
       "paint": {
-        "line-offset":-5,
-        "line-width": 10,
+        "line-offset":-2,
+        "line-width": 8,
         "line-blur":1,
-        "line-color": "#990000",
-        "line-opacity": .5
+        "line-color": "#FF6666",
+        "line-opacity": .9
       }
     })
     map.addLayer({
       "id": "results-tiles",
       "type": "fill",
       "source": "results",
-      "minzoom":7,
+      "minzoom":0,
       "maxzoom":22,
       "paint": {
-        "fill-color": "#990000",
+        "fill-color": "#FF6666",
         "fill-opacity": .5
         // "fill-outline-color": "#00FF00"
       }
@@ -65,7 +64,7 @@ map.on('load', function () {
 });
 
 map.on('click', function (e) {
-    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
+    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles','results-lines'] });
     if (!features.length) {
         return;
     }
@@ -79,7 +78,7 @@ map.on('click', function (e) {
 });
 
 map.on('mousemove', function (e) {
-    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
+    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles','results-lines'] });
     map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 });
 </script>
