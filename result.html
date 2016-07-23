@@ -25,6 +25,7 @@ var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
     zoom: 4,
+    minZoom:3,
     center: [-97.559, 39.368]
 });
 
@@ -36,12 +37,29 @@ var source = new mapboxgl.GeoJSONSource({
 map.on('load', function () {
     map.addSource('results', source);
     map.addLayer({
+      "id": "results-lines",
+      "type": "line",
+      "source": "results",
+      "minzoom":3,
+      "maxzoom":7,
+      "paint": {
+        "line-offset":-5,
+        "line-width": 10,
+        "line-blur":1,
+        "line-color": "#990000",
+        "line-opacity": .5
+      }
+    })
+    map.addLayer({
       "id": "results-tiles",
       "type": "fill",
       "source": "results",
+      "minzoom":7,
+      "maxzoom":22,
       "paint": {
         "fill-color": "#990000",
         "fill-opacity": .5
+        // "fill-outline-color": "#00FF00"
       }
     })
 });
