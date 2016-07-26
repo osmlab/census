@@ -29,10 +29,44 @@ var map = new mapboxgl.Map({
     center: [-97.559, 39.368]
 });
 
+
 var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
 var source = new mapboxgl.GeoJSONSource({
     data: url
 });
+
+// var request = new XMLHttpRequest();
+// request.open('GET', url, true);
+// request.onload = function() {
+//   if (request.status >= 200 && request.status < 400) {
+//     // Success!
+//     var data = JSON.parse(request.responseText);
+//
+//     var male = 0;
+//     var female = 0;
+//     var other = 0;
+//
+//     data.features.forEach(function(feat){
+//       if(feat.properties['gender-male']){
+//         male += feat.properties['gender-male']
+//       }
+//       if(feat.properties['gender-female']){
+//         female += feat.properties['gender-female']
+//       }
+//       if(feat.properties['gender-other']){
+//         other += feat.properties['gender-other']
+//       }
+//     })
+//     console.log(male, female, other);
+//
+//   } else {
+//     // We reached our target server, but it returned an error
+//   }
+// };
+// request.onerror = function() {
+//   // There was a connection error of some sort
+// };
+// request.send();
 
 map.on('load', function () {
     map.addSource('results', source);
