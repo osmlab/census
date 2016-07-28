@@ -84,6 +84,9 @@
   <div id='age' class="result">
     <h3 class="result-heading">Age</h3>
   </div>
+  <div id='use' class="result">
+    <h3 class="result-heading">Daily OSM Use</h3>
+  </div>
 </div>
 
 <h3 id='tooltip' class='d3-label-tooltip result-heading' style="position:absolute; z-index:100, display:none"></h3>
@@ -94,7 +97,7 @@ var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
     zoom: 4,
-    minZoom:3,
+    minZoom:4,
     center: [-97.559, 39.368]
 });
 
@@ -103,6 +106,7 @@ var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
 
 var ageHandler = new AgeHandler();
 var genderHandler = new GenderHandler();
+var useHandler = new UseHandler();
 
 var request = new XMLHttpRequest();
 request.open('GET', url, true);
@@ -115,6 +119,7 @@ request.onload = function() {
     data.features.forEach(function(feat){
       ageHandler.count(feat.properties)
       genderHandler.count(feat.properties)
+      useHandler.count(feat.properties)
 
       centers.features.push({
         type:"Feature",
@@ -125,6 +130,7 @@ request.onload = function() {
 
     ageHandler.buildGraph('#age')
     genderHandler.buildPieChart('#gender')
+    useHandler.buildPieChart('#use')
 
     source = new mapboxgl.GeoJSONSource({
       data: data
@@ -197,17 +203,16 @@ var popup = new mapboxgl.Popup()
 
 map.on('click', function (e) {
   if(popup){
-    console.log('yup')
     popup.remove()
   }
   if(map.getZoom()<8){
-    console.log("aggregating")
+    // console.log("aggregating")
     var features = map.queryRenderedFeatures([
         [e.point.x - width / 2, e.point.y - height / 2],
         [e.point.x + width / 2, e.point.y + height / 2]
       ], { layers: ['results-tiles'] });
   }else{
-    console.log('not aggregating')
+    // console.log('not aggregating')
     var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
   }
   if (!features.length) {
