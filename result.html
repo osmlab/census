@@ -5,13 +5,71 @@
     <title></title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.21.0/mapbox-gl.js'></script>
+    <script src="//d3js.org/d3.v3.min.js"></script>
+    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
+    <script src='results-aggregator.js'></script>
+
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.21.0/mapbox-gl.css' rel='stylesheet' />
     <style>
         body { margin:0; padding:0; }
         #map { position:absolute; top:0; bottom:0; width:100%; }
         .mapboxgl-popup {
-          max-width: 400px;
+          width:470px;
           font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+          z-index:50;
+        }
+        #aggregate-results{
+          display:block;
+          position:fixed;
+          top:10px;
+          left:0;
+          height:75px;
+          width:100%;
+          text-align:center;
+        }
+        .result-heading{
+          margin:0;
+          padding:0;
+          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+        }
+        .result{
+          display:inline-block;
+          margin: 0 auto;
+          height:120px;
+          background-color:white;
+          border-radius: 5px;
+          padding: 10px;
+          text-align:center;
+        }
+        .d3-label-tooltip{
+          background-color: white;
+          padding: 5px;
+          border-radius: 3px;
+          z-index:101
+        }
+
+        .bar {
+          fill: steelblue;
+          opacity: 0.75;
+        }
+
+        .bar:hover {
+          opacity:1
+        }
+
+        .axis {
+          font: 10px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+          fill: none;
+          stroke: #000;
+          shape-rendering: crispEdges;
+        }
+
+        .x.axis path {
+          display: none;
         }
     </style>
 </head>
@@ -19,69 +77,176 @@
 
 <div id='map'></div>
 
+<div id="aggregate-results">
+  <div id='gender' class="result">
+    <h3 class="result-heading">Gender</h3>
+  </div>
+  <div id='age' class="result">
+    <h3 class="result-heading">Age</h3>
+  </div>
+  <div id='use' class="result">
+    <h3 class="result-heading">Daily OSM Use</h3>
+  </div>
+</div>
+
+<h3 id='tooltip' class='d3-label-tooltip result-heading' style="position:absolute; z-index:100, display:none"></h3>
+
 <script>
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlrZWxtYXJvbiIsImEiOiJjaWZlY25lZGQ2cTJjc2trbmdiZDdjYjllIn0.Wx1n0X7aeCQyDTnK6_mrGw';
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
     zoom: 4,
-    minZoom:3,
+    minZoom:4,
     center: [-97.559, 39.368]
 });
 
-var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
-var source = new mapboxgl.GeoJSONSource({
-    data: url
-});
 
-map.on('load', function () {
-    map.addSource('results', source);
-    map.addLayer({
-      "id": "results-lines",
-      "type": "line",
-      "source": "results",
-      "minzoom":3,
-      "paint": {
-        "line-offset":-2,
-        "line-width": 8,
-        "line-blur":1,
-        "line-color": "#FF6666",
-        "line-opacity": .9
-      }
+var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
+
+var ageHandler = new AgeHandler();
+var genderHandler = new GenderHandler();
+var useHandler = new UseHandler();
+
+var request = new XMLHttpRequest();
+request.open('GET', url, true);
+request.onload = function() {
+  if (request.status >= 200 && request.status < 400) {
+
+    var centers = {type:"FeatureCollection",features:[]}
+    var data = JSON.parse(request.responseText);
+
+    data.features.forEach(function(feat){
+      ageHandler.count(feat.properties)
+      genderHandler.count(feat.properties)
+      useHandler.count(feat.properties)
+
+      centers.features.push({
+        type:"Feature",
+        properties:{},
+        geometry: turf.center(feat).geometry
+      })
     })
-    map.addLayer({
-      "id": "results-tiles",
-      "type": "fill",
-      "source": "results",
-      "minzoom":0,
-      "maxzoom":22,
-      "paint": {
-        "fill-color": "#FF6666",
-        "fill-opacity": .5
-        // "fill-outline-color": "#00FF00"
-      }
-    })
-});
+
+    ageHandler.buildGraph('#age')
+    genderHandler.buildPieChart('#gender')
+    useHandler.buildPieChart('#use')
+
+    source = new mapboxgl.GeoJSONSource({
+      data: data
+    });
+
+    startMap(source, centers)
+
+  } else {
+    // We reached our target server, but it returned an error
+  }
+};
+request.onerror = function() {
+  // There was a connection error of some sort
+};
+request.send();
+
+function startMap(source, centers){
+
+
+  map.addSource('results', source);
+
+  map.addLayer({
+    "id": "results-tiles",
+    "type": "fill",
+    "source": "results",
+    "minzoom":0,
+    "maxzoom":22,
+    "paint": {
+      "fill-color": "#FF6666",
+      "fill-opacity": {
+        'stops':[
+          [0,0],[7.9,0.1],[8,0.5]
+        ]
+      },
+      'fill-outline-color':'#FF6666'
+    }
+  })
+
+  map.addSource('results-circles', {
+    type: "geojson",
+    data: centers,
+    cluster: true,
+    clusterMaxZoom: 14, // Max zoom to cluster points on
+    clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+  });
+
+  map.addLayer({
+    "id": "results-circles",
+    "type": "circle",
+    "source": "results-circles",
+    "minzoom":3,
+    "maxzoom":8,
+    "paint":{
+      "circle-radius": {
+        "stops": [
+          [3, 10],
+          [8, 40]
+        ]
+      },
+      "circle-color": "#FF6666",
+      "circle-opacity": 0.5
+    }
+  })
+}
+
+var width  = 40;
+var height = 40;
+
+var popup = new mapboxgl.Popup()
 
 map.on('click', function (e) {
-    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles','results-lines'] });
-    if (!features.length) {
-        return;
-    }
+  if(popup){
+    popup.remove()
+  }
+  if(map.getZoom()<8){
+    // console.log("aggregating")
+    var features = map.queryRenderedFeatures([
+        [e.point.x - width / 2, e.point.y - height / 2],
+        [e.point.x + width / 2, e.point.y + height / 2]
+      ], { layers: ['results-tiles'] });
+  }else{
+    // console.log('not aggregating')
+    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
+  }
+  if (!features.length) {
+      return;
+  }
+  console.log(features.length)
 
-    var feature = features[0];
+  this_age = new AgeHandler();
+  this_gender = new GenderHandler();
 
-    var popup = new mapboxgl.Popup()
-        .setLngLat(map.unproject(e.point))
-        .setHTML('<pre>' + JSON.stringify(feature.properties,null,2) + '</pre>')
-        .addTo(map);
+  for(var i=0; i< features.length; i++){
+    this_age.count(features[i].properties)
+    this_gender.count(features[i].properties)
+  }
+
+  popup = new mapboxgl.Popup()
+      .setLngLat(map.unproject(e.point))
+      .setHTML(`<div class="result" id="popup-gender">
+        <h3 class="result-heading">Gender</h3>
+        </div>
+        <div class="result" id="popup-age">
+          <h3 class="result-heading">Age</h3>
+        </div>`)
+      .addTo(map);
+  this_age.buildGraph('#popup-age')
+  this_gender.buildPieChart('#popup-gender')
 });
 
 map.on('mousemove', function (e) {
-    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles','results-lines'] });
+    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles','results-circles'] });
     map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
 });
 </script>
 
 </body>
+
 </html>
