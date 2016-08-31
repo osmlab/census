@@ -98,6 +98,7 @@ var map = new mapboxgl.Map({
     style: 'mapbox://styles/mapbox/streets-v9',
     zoom: 4,
     minZoom:4,
+    maxZoom:7.99,
     center: [-97.559, 39.368]
 });
 
@@ -160,13 +161,14 @@ function startMap(source, centers){
     "maxzoom":22,
     "paint": {
       "fill-color": "#FF6666",
-      "fill-opacity": {
-        'stops':[
-          [0,0],[7.9,0.1],[8,0.5]
-        ]
-      },
-      'fill-outline-color':'#FF6666'
-    }
+      "fill-opacity": 0.01
+      // {
+      //   'stops':[
+      //     [0,0],[7.9,0.1],[8,0.5]
+      //   ]
+      // },
+      // 'fill-outline-color':'#FF6666'
+     }
   })
 
   map.addSource('results-circles', {
