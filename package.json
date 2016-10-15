@@ -4,13 +4,13 @@
   "description": "OSM US Census",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "budo index.js --serve=bundle.js --live -d",
+    "build": "browserify index.js > bundle.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/osmlab/census.git"
   },
-  "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/osmlab/census/issues"
@@ -18,5 +18,9 @@
   "homepage": "https://github.com/osmlab/census#readme",
   "dependencies": {
     "tilebelt": "^1.0.1"
+  },
+  "devDependencies": {
+    "browserify": "^13.1.0",
+    "budo": "^9.2.1"
   }
 }
