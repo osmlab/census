@@ -1,4 +1,4 @@
-OpenStreetMap US Community Survey 2016
+2016 OpenStreetMap US Census
 ---
 
 ### Running locally
