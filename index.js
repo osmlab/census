@@ -204,7 +204,7 @@ function setAnimation(el) {
   params.set('duration', randomInt(3000, 5000));
   params.set('delay', randomInt(50, 100));
   params.set('opacity', [0, 1]);
-  params.set('height', [0, 20]);
+  params.set('height', [randomInt(0, 10), 20]);
   params.set('translateY', -400);
   params.set('easing', 'easeInQuad');
   params.set('complete', complete.bind(this, el));
