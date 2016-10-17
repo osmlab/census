@@ -129,31 +129,34 @@ $.ajaxSetup({
 });
 
 $(function() {
+  var $form = $('#form');
+
   $('#js-scroll-to-survey').click(function() {
     $('html,body').animate({
       scrollTop: $('#survey').offset().top
     }, 500);
   });
 
-  $('#form').submit(function(e) {
+  $form.submit(function(e) {
     e.preventDefault();
-    $('#form').addClass('loading');
+    $form.addClass('loading');
     var send = {};
-    $('#form').serializeArray().forEach(function(obj) {
+    $form.serializeArray().forEach(function(obj) {
        send[obj['name']] = obj['value'];
     });
+
     $.ajax({
       url: 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/entry',
       type: 'POST',
       data: JSON.stringify(send),
       error: function(xhr, error) {
         window.alert('Error!  Status = ' + xhr.status + ' Message = ' + error);
-        $('#form').removeClass('loading');
+        $form.removeClass('loading');
       },
       success: function() {
         window.alert('thanks for your submission!');
-        $('#form').removeClass('loading');
-        $('#js-submit').addClass('disabled');
+        $form.removeClass('loading');
+        $('#js-submit').addClass('disabled').attr('value', 'Submitted!');
       }
     });
     return false;
