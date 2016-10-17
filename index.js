@@ -40,7 +40,7 @@ var polygon_geojson = {
     type: 'Feature',
     geometry: {
       type: 'Polygon',
-      coordinates: [[[0, 0]]]
+      coordinates: []
     }
   }]
 };
@@ -50,6 +50,7 @@ map.on('load', function() {
     type: 'geojson',
     data: {
       type: 'FeatureCollection',
+      properties: [],
       features: []
     }
   });
@@ -59,8 +60,7 @@ map.on('load', function() {
     source: 'tile-polygon',
     type: 'fill',
     paint: {
-      'fill-color': 'rgba(0,0,0,0.25)',
-      'fill-opacity': .5
+      'fill-color': 'rgba(29, 161, 242, 0.25)'
     }
   });
 
