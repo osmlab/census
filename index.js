@@ -18,6 +18,11 @@ var marker = new mapboxgl.Marker(document.createElement('div'), {
   offset: [-10, -10]
 });
 
+var popup = new mapboxgl.Popup({
+  closeButton: false,
+  closeOnClick: false
+});
+
 var geocoder = new mapboxgl.Geocoder({
   zoom: 12,
   container: 'geocoder-container'
@@ -64,6 +69,12 @@ map.on('load', function() {
   map.on('click', onClick);
 });
 
+function setPopup(coords) {
+  popup.setLngLat(coords)
+    .setText('Local tile set!')
+    .addTo(map);
+}
+
 function drawTile(coords) {
   var bbox = tilebelt.tileToBBOX(tilebelt.pointToTile(coords[0], coords[1], 12));
 
@@ -93,6 +104,7 @@ function onClick(e) {
   var coords = [e.lngLat.lng, e.lngLat.lat];
   marker.setLngLat(coords).addTo(map);
   drawTile(coords);
+  setPopup(coords);
 }
 
 function onGeocoder(e) {
@@ -100,6 +112,7 @@ function onGeocoder(e) {
   var coords = e.result.geometry.coordinates;
   marker.setLngLat(coords).addTo(map);
   drawTile(coords);
+  setPopup(coords);
 }
 
 function onGeoLocate(e) {
@@ -107,6 +120,7 @@ function onGeoLocate(e) {
   var coords = [e.coords.longitude, e.coords.latitude];
   marker.setLngLat(coords).addTo(map);
   drawTile(coords);
+  setPopup(coords);
 }
 
 $.ajaxSetup({
