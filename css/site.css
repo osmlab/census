@@ -96,7 +96,8 @@ header { color:#fff; }
 .space-top1 { margin-top:10px; }
 .space-top2 { margin-top:20px; }
 .space-top4 { margin-top:40px; }
-.zneg { z-index:-1; }
+.zneg1 { z-index:-1; }
+.zneg10 { z-index:-10; }
 .round-deep { border-radius:20px; }
 
 iframe {
@@ -239,3 +240,7 @@ select {
 .mapboxgl-popup-anchor-right .mapboxgl-popup-tip { border-left-color:#003036; }
 .mapboxgl-popup-anchor-left .mapboxgl-popup-tip { border-right-color:#003036; }
 
+.hearts-animation {
+  width:880px;
+  height:400px;
+  }
