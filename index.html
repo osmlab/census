@@ -1,227 +1,150 @@
 <html>
-  <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="https://malsup.github.io/jquery.blockUI.js"></script>
-    <script>
-      $.ajaxSetup({
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"
-      });
-      $(document).ready(function(){
-        $('#form').submit(function(event) {
-          event.preventDefault();
-          $.blockUI({ message: '<h1>Posting your response...</h1>' });
-          var send = {};
-          $("#form").serializeArray().forEach(  function(obj) {
-             send[obj['name']] = obj['value'];
-          });
-          $.ajax({
-            url: "https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/entry",
-            type: "POST",
-            data: JSON.stringify(send),
-            error: function(xhr, error) {
-              alert('Error!  Status = ' + xhr.status + ' Message = ' + error);
-            },
-            success: function(data) {
-              window.location = "result.html";
-              return;
-              //have you service return the created object
-              var items = [];
-              items.push('<table cellpadding="4" cellspacing="4">');
-              items.push('<tr><td>name</td><td>' + data.properties.username + '</td></tr>');
-              items.push('</table>');
-              $('#result').html(items.join(''));
-            }
-          });
-          return false;
-        });
-      });
-      function setLocationInForm(bbox) {
-        $('#w').val(bbox[0]);
-        $('#s').val(bbox[1]);
-        $('#e').val(bbox[2]);
-        $('#n').val(bbox[3]);
-      }
-    </script>
-    <style type="text/css">
-.form-style-5{
-    max-width: 100%; /*500px;*/
-    padding: 10px 20px;
-    background: #f4f7f8;
-    margin: 10px auto;
-    padding: 20px;
-    background: #f4f7f8;
-    border-radius: 8px;
-    font-family: Georgia, "Times New Roman", Times, serif;
-}
-.form-style-5 fieldset{
-    border: none;
-}
-.form-style-5 legend {
-    font-size: 1.4em;
-    margin-bottom: 10px;
-}
-.form-style-5 label {
-    display: block;
-    margin-bottom: 8px;
-}
-.form-style-5 input[type="text"],
-.form-style-5 input[type="date"],
-.form-style-5 input[type="datetime"],
-.form-style-5 input[type="email"],
-.form-style-5 input[type="number"],
-.form-style-5 input[type="search"],
-.form-style-5 input[type="time"],
-.form-style-5 input[type="url"],
-.form-style-5 textarea,
-.form-style-5 select {
-    font-family: Georgia, "Times New Roman", Times, serif;
-    background: rgba(255,255,255,.1);
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    margin: 0;
-    outline: 0;
-    padding: 7px;
-    width: 100%;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    background-color: #e8eeef;
-    color:#8a97a0;
-    -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
-    box-shadow: 0 1px 0 rgba(0,0,0,0.03) inset;
-    margin-bottom: 30px;
+<head>
+  <title>OpenStreetMap US Census</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,700' rel='stylesheet'>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.25.1/mapbox-gl.css' rel='stylesheet' />
+  <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.css' rel='stylesheet' />
+  <link href='css/base.css' rel='stylesheet' />
+  <link href='css/site.css' rel='stylesheet' />
+</head>
+<body>
 
-}
-.form-style-5 input[type="text"]:focus,
-.form-style-5 input[type="date"]:focus,
-.form-style-5 input[type="datetime"]:focus,
-.form-style-5 input[type="email"]:focus,
-.form-style-5 input[type="number"]:focus,
-.form-style-5 input[type="search"]:focus,
-.form-style-5 input[type="time"]:focus,
-.form-style-5 input[type="url"]:focus,
-.form-style-5 textarea:focus,
-.form-style-5 select:focus{
-    background: #d2d9dd;
-}
-.form-style-5 select{
-    -webkit-appearance: menulist-button;
-    height:35px;
-}
-.form-style-5 .number {
-    background: #1abc9c;
-    color: #fff;
-    height: 30px;
-    width: 30px;
-    display: inline-block;
-    font-size: 0.8em;
-    margin-right: 4px;
-    line-height: 30px;
-    text-align: center;
-    text-shadow: 0 1px 0 rgba(255,255,255,0.2);
-    border-radius: 15px 15px 15px 0px;
-}
-
-.form-style-5 input[type="submit"],
-.form-style-5 input[type="button"]
-{
-    position: relative;
-    display: block;
-    padding: 19px 39px 18px 39px;
-    color: #FFF;
-    margin: 0 auto;
-    background: #1abc9c;
-    font-size: 18px;
-    text-align: center;
-    font-style: normal;
-    width: 100%;
-    border: 1px solid #16a085;
-    border-width: 1px 1px 3px;
-    margin-bottom: 10px;
-}
-.form-style-5 input[type="submit"]:hover,
-.form-style-5 input[type="button"]:hover
-{
-    background: #109177;
-}
-</style>
-  </head>
-
-  <body>
-    <div class="form-style-5">
-    <form id="form" action="" method="POST">
-      <fieldset>
-        <legend>OpenStreetMap US Census</legend>
-        <input id="username" type="text" name="username" placeholder="OSM username" />
-        <legend>Gender</legend>
-        <select id="gender" name="gender">
-          <option value=""></option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-          <option value="other">Other</option>
-        </select>
-        <legend>Age</legend>
-        <select id="age" name="age">
-          <option value=""></option>
-          <option value="18-19">18-19</option>
-          <option value="20-24">20-24</option>
-          <option value="25-29">25-29</option>
-          <option value="30-34">30-34</option>
-          <option value="35-39">35-39</option>
-          <option value="40-44">40-44</option>
-          <option value="45-49">45-49</option>
-          <option value="50-54">50-54</option>
-          <option value="55-59">55-59</option>
-          <option value="60-64">60-64</option>
-          <option value="65+">65+</option>
-        </select>
-        <legend>Ethnicity</legend>
-        <select id="ethnicity" name="ethnicity">
-          <option value=""></option>
-          <option value="caucasian">Caucasian</option>
-          <option value="african-american">African American</option>
-          <option value="native-american">Native American</option>
-          <option value="latino-hispanic">Latino/Hispanic</option>
-          <option value="asian">Asian</option>
-          <option value="pacific-islander">Pacific Islander</option>
-          <option value="other">Other</option>
-        </select>
-        <legend>Do you use OSM in your everyday life?</legend>
-        <select id="use" name="use">
-          <option value=""></option>
-          <option value="yes-work">yes, for work</option>
-          <option value="yes-personal">yes, for personal use</option>
-          <option value="no">no</option>
-        </select>
-        <legend>Would you be interested in participating in a larger survey regarding OSM demographics and motivations?</legend>
-        <select id="more" name="more">
-          <option value=""></option>
-          <option value="yes">yes</option>
-          <option value="yes">no</option>
-        </select>
-        <input id="w" type="hidden" name="w"/>
-        <input id="s" type="hidden" name="s"/>
-        <input id="e" type="hidden" name="e"/>
-        <input id="n" type="hidden" name="n"/>
-        <legend>Search and position the location to your "local tile"</legend>
-      </fieldset>
-      <iframe src="geocode.html" width="100%" height="450"></iframe>
-      <input id="input" type="submit" name="submit" value="Post It" />
-    </form>
-    <p>Thanks for your participation in this Survey! We have organized this project as three independent OSM-US contributors interested in better understanding our community.<br>
-    We hope to share our results back to the community by creating an open (anonymous in the aggregate) dataset for all to use in their own research.<br>
-     <a href="https://www.openstreetmap.org/user/mikelmaron">Mikel</a>,
-     <a href="https://www.openstreetmap.org/user/Jennings%20Anderson/">Jennings</a>, &amp;
-     <a target="_blank" href="https://www.openstreetmap.org/user/rsoden">Robert</p>
-    </p>
+<header class='contain'>
+  <div class='limiter clearfix'>
+    <div class='col6 pad2y space-bottom4'>
+      <small class='space-bottom2'>
+        <img src='img/osmus.svg' alt='' />
+        <h1>2016 OpenStreetMap US Census</h1>
+      </small>
+      <h2 class='space-bottom1'>Learning from &amp; growing the community</h2>
+      <p class='muted'>We're conducting a census to answer questions that a profile on openstreetmap doesn't provide. We want to learn more about who is mapping, why they're doing it, and how we can continue to grow and nurture our community.</p>
+      <button id='js-scroll-to-survey' class='button'>Complete the survey</button>
+      <div class='space-top1'>
+        <small>Read the <a href='#privacy'>privacy policy</a>.</small>
+      </div>
     </div>
+  </div>
+  <img src='img/splash-illustration.svg' class='pin-bottomright zneg hide-mobile' alt='' />
+</header>
 
+<section id='survey' class='fill-white pad4y pad2x clearfix'>
+  <form id='form' method='POST' class='round-deep margin3 col6 pad4y fill-grey contain'>
+    <fieldset class='pad4x'>
+      <label>OSM Username</label>
+      <input id='username' type='text' name='username' placeholder='OSM username' required />
+    </fieldset>
 
+    <fieldset class='select-field pad4x'>
+      <label>Gender</label>
+      <select id='gender' name='gender' required>
+        <option value='' disabled selected>Choose…</option>
+        <option value='male'>Male</option>
+        <option value='female'>Female</option>
+        <option value='other'>Other</option>
+      </select>
+    </fieldset>
 
-    <div id="result"></div>
+    <fieldset class='select-field pad4x'>
+      <label>Age</label>
+      <select id='age' name='age' required>
+        <option value='' disabled selected>Choose…</option>
+        <option value='18-19'>18-19</option>
+        <option value='20-24'>20-24</option>
+        <option value='25-29'>25-29</option>
+        <option value='30-34'>30-34</option>
+        <option value='35-39'>35-39</option>
+        <option value='40-44'>40-44</option>
+        <option value='45-49'>45-49</option>
+        <option value='50-54'>50-54</option>
+        <option value='55-59'>55-59</option>
+        <option value='60-64'>60-64</option>
+        <option value='65+'>65+</option>
+      </select>
+    </fieldset>
 
-  </body>
+    <fieldset class='select-field pad4x'>
+      <label>Ethnicity</label>
+      <select id='ethnicity' name='ethnicity' required>
+        <option value='' disabled selected>Choose…</option>
+        <option value='caucasian'>Caucasian</option>
+        <option value='african-american'>African American</option>
+        <option value='native-american'>Native American</option>
+        <option value='latino-hispanic'>Latino/Hispanic</option>
+        <option value='asian'>Asian</option>
+        <option value='pacific-islander'>Pacific Islander</option>
+        <option value='other'>Other</option>
+      </select>
+    </fieldset>
+
+    <fieldset class='select-field pad4x'>
+      <label>Do you use OSM in your everyday life?</label>
+      <select id='use' name='use' required>
+        <option value='' disabled selected>Choose…</option>
+        <option value='yes-work'>yes, for work</option>
+        <option value='yes-personal'>yes, for personal use</option>
+        <option value='no'>no</option>
+      </select>
+    </fieldset>
+
+    <fieldset class='select-field pad4x'>
+      <label>Participate in a larger survey?</label>
+      <small class='light space-bottom0 block'>Would you be interested in participating in a larger survey regarding OSM demographics and motivations?</small>
+      <select id='more' name='more' required>
+        <option value='' disabled selected>Choose…</option>
+        <option value='yes'>yes</option>
+        <option value='yes'>no</option>
+      </select>
+    </fieldset>
+
+    <fieldset class='col12'>
+      <div class='pad4x'>
+        <label>Where is the location of your 'local tile'?</label>
+        <small class='light space-bottom1 block'>Click or search the map to place a point that marks your local tile.</small>
+      </div>
+
+      <div class='contain map-container'>
+        <div id='map' class='map'></div>
+        <div id='geocoder-container' class='geocoder'></div>
+      </div>
+
+      <input id='bbox' type='hidden' name='bbox'/>
+    </fieldset>
+
+    <fieldset class='pad4x'>
+      <div class='space-bottom2'>
+        <input id='js-submit' type='submit' name='submit' value='Submit' class='col12 button' />
+      </div>
+      <small>Thanks for your participation in this Survey! The OpenStreetMap-US Foundation will use this information to conduct research on the makeup and and mapping behaviors of the community.</small>
+    </fieldset>
+  </form>
+
+</section>
+
+<section id='result'></section>
+
+<footer id='privacy' class='fill-grey pad8y'>
+  <div class='limiter'>
+    <h3>Privacy Policy</h3>
+    <p>This privacy policy discloses the data privacy and security practices for the OSM-US Census. This privacy policy applies solely to information collected through the survey located at osmlab.github.io/census/.</p>
+
+    <h4 class='space-top4'>Information Collection and Use</h4>
+    <p>We only collect the information that you have explicitly provided through the survey, we do not collect any extra information such as IP addresses or browser information. The geographic data we collect is only identifiable to the Zoom-Level 12 tile (roughly the area of a medium-sized city).</p>
+
+    <p>The realtime results page located at <a href='https://osmlab.github.io/census/results/'>https://osmlab.github.io/census/results/</a> shows the aggregated results of the survey for the community to view. Result data is dynamically aggregated to show a minimum of two users for any given area so that no single user’s information is ever presented in detail. In areas where only one user has responded to the survey, data is aggregated to 200 miles.</p>
+
+    <p>The OpenStreetMap-US Foundation will use this information to conduct research on the makeup and and mapping behaviors of the community. This will be done in partnership with academic and community research partners.</p>
+
+    <p><strong>Any and all findings released using data from this survey will be anonymized and/or presented in the aggregate.</strong></p>
+
+    <h4 class='space-top4'>Security</h4>
+    <p>The survey results that you provide are stored on a secure Amazon server.</p>
+
+    <h4 class='space-top4'>Contact</h4>
+    <p>If you provided your OpenStreetMap username, we may contact you through the openstreetmap.org messages platform to invite you to a follow up survey.</p>
+  </div>
+</footer>
+
+<script src='bundle.js'></script>
+</body>
 </html>

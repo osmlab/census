@@ -7,71 +7,9 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.21.0/mapbox-gl.js'></script>
     <script src="//d3js.org/d3.v3.min.js"></script>
     <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
-    <script src='results-aggregator.js'></script>
-
+    <script src='site.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.21.0/mapbox-gl.css' rel='stylesheet' />
-    <style>
-        body { margin:0; padding:0; }
-        #map { position:absolute; top:0; bottom:0; width:100%; }
-        .mapboxgl-popup {
-          width:470px;
-          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-          z-index:50;
-        }
-        #aggregate-results{
-          display:block;
-          position:fixed;
-          top:10px;
-          left:0;
-          height:75px;
-          width:100%;
-          text-align:center;
-        }
-        .result-heading{
-          margin:0;
-          padding:0;
-          font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-        }
-        .result{
-          display:inline-block;
-          margin: 0 auto;
-          height:120px;
-          background-color:white;
-          border-radius: 5px;
-          padding: 10px;
-          text-align:center;
-        }
-        .d3-label-tooltip{
-          background-color: white;
-          padding: 5px;
-          border-radius: 3px;
-          z-index:101
-        }
-
-        .bar {
-          fill: steelblue;
-          opacity: 0.75;
-        }
-
-        .bar:hover {
-          opacity:1
-        }
-
-        .axis {
-          font: 10px sans-serif;
-        }
-
-        .axis path,
-        .axis line {
-          fill: none;
-          stroke: #000;
-          shape-rendering: crispEdges;
-        }
-
-        .x.axis path {
-          display: none;
-        }
-    </style>
+    <link href='site.css' rel='stylesheet' />
 </head>
 <body>
 
