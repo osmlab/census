@@ -8,8 +8,8 @@ var tilebelt = require('tilebelt');
 var map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/streets-v9',
-  center: [-122.3359, 47.6037],
-  zoom: 12
+  center: [-18.3, 37.7],
+  zoom: 1
 });
 
 map.scrollZoom.disable();
@@ -20,7 +20,7 @@ var marker = new mapboxgl.Marker(document.createElement('div'), {
 
 var geocoder = new mapboxgl.Geocoder({
   zoom: 12,
-  container: 'geocoder-container'// Optional. Specify a unique container for the control to be added to.
+  container: 'geocoder-container'
 });
 
 var geolocate = new mapboxgl.Geolocate();
@@ -40,8 +40,6 @@ var polygon_geojson = {
   }]
 };
 
-// After the map style has loaded on the page, add a source layer and default
-// styling for a single point.
 map.on('load', function() {
   map.addSource('tile-polygon', {
     type: 'geojson',
@@ -72,8 +70,8 @@ function drawTile(coords) {
   polygon_geojson.features[0].geometry.coordinates = [[[w, s], [w, n], [e, n], [e, s], [w, s] ]];
   map.getSource('tile-polygon').setData(polygon_geojson);
 
-  // Send result to form?
-  document.getElementById('bbox').setAttribute('value', bbox);
+  // Send result to form
+  document.getElementById('bbox').setAttribute('value', bbox.join());
 }
 
 function onClick(e) {

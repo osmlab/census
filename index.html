@@ -12,7 +12,7 @@
 
 <header class='contain'>
   <div class='limiter clearfix'>
-    <div class='col6 pad4y space-bottom4'>
+    <div class='col6 pad2y space-bottom4'>
       <small class='space-bottom2'>
         <img src='img/osmus.svg' alt='' />
         <h1>2016 OpenStreetMap US Census</h1>
@@ -28,16 +28,16 @@
   <img src='img/splash-illustration.svg' class='pin-bottomright zneg hide-mobile' alt='' />
 </header>
 
-<section id='survey' class='fill-white pad8y pad2x clearfix'>
+<section id='survey' class='fill-white pad4y pad2x clearfix'>
   <form id='form' method='POST' class='round-deep margin3 col6 pad4y fill-grey contain'>
     <fieldset class='pad4x'>
       <label>OSM Username</label>
-      <input id='username' type='text' name='username' placeholder='OSM username' />
+      <input id='username' type='text' name='username' placeholder='OSM username' required />
     </fieldset>
 
     <fieldset class='select-field pad4x'>
       <label>Gender</label>
-      <select id='gender' name='gender'>
+      <select id='gender' name='gender' required>
         <option value='' disabled selected>Choose…</option>
         <option value='male'>Male</option>
         <option value='female'>Female</option>
@@ -47,7 +47,7 @@
 
     <fieldset class='select-field pad4x'>
       <label>Age</label>
-      <select id='age' name='age' placeholder='Age'>
+      <select id='age' name='age' required>
         <option value='' disabled selected>Choose…</option>
         <option value='18-19'>18-19</option>
         <option value='20-24'>20-24</option>
@@ -65,7 +65,7 @@
 
     <fieldset class='select-field pad4x'>
       <label>Ethnicity</label>
-      <select id='ethnicity' name='ethnicity'>
+      <select id='ethnicity' name='ethnicity' required>
         <option value='' disabled selected>Choose…</option>
         <option value='caucasian'>Caucasian</option>
         <option value='african-american'>African American</option>
@@ -79,7 +79,7 @@
 
     <fieldset class='select-field pad4x'>
       <label>Do you use OSM in your everyday life?</label>
-      <select id='use' name='use'>
+      <select id='use' name='use' required>
         <option value='' disabled selected>Choose…</option>
         <option value='yes-work'>yes, for work</option>
         <option value='yes-personal'>yes, for personal use</option>
@@ -90,7 +90,7 @@
     <fieldset class='select-field pad4x'>
       <label>Participate in a larger survey?</label>
       <small class='light space-bottom0 block'>Would you be interested in participating in a larger survey regarding OSM demographics and motivations?</small>
-      <select id='more' name='more'>
+      <select id='more' name='more' required>
         <option value='' disabled selected>Choose…</option>
         <option value='yes'>yes</option>
         <option value='yes'>no</option>
@@ -99,7 +99,7 @@
 
     <fieldset class='col12'>
       <div class='pad4x'>
-        <label>Where's the location of your 'local tile'?</label>
+        <label>Where is the location of your 'local tile'?</label>
         <small class='light space-bottom1 block'>Click or search the map to place a point that marks your local tile.</small>
       </div>
 
