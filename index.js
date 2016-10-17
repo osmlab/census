@@ -66,8 +66,22 @@ map.on('load', function() {
 
 function drawTile(coords) {
   var bbox = tilebelt.tileToBBOX(tilebelt.pointToTile(coords[0], coords[1], 12));
-  var w = bbox[0]; var s = bbox[1]; var e = bbox[2]; var n = bbox[3];
-  polygon_geojson.features[0].geometry.coordinates = [[[w, s], [w, n], [e, n], [e, s], [w, s] ]];
+
+  var w = bbox[0];
+  var s = bbox[1];
+  var e = bbox[2];
+  var n = bbox[3];
+
+  polygon_geojson.features[0].geometry.coordinates = [
+    [
+     [w, s],
+     [w, n],
+     [e, n],
+     [e, s],
+     [w, s]
+    ]
+  ];
+
   map.getSource('tile-polygon').setData(polygon_geojson);
 
   // Send result to form
