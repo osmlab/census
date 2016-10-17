@@ -1,13 +1,18 @@
 'use strict';
 
-/* global mapboxgl, $ */
-mapboxgl.accessToken = 'pk.eyJ1IjoibWlrZWxtYXJvbiIsImEiOiJjaWZlY25lZGQ2cTJjc2trbmdiZDdjYjllIn0.Wx1n0X7aeCQyDTnK6_mrGw';
+window.mapboxgl = require('mapbox-gl');
+require('mapbox-gl-geocoder');
 
 var tilebelt = require('tilebelt');
+var animate = require('animateplus');
+var $ = require('jquery');
+
+/* global mapboxgl */
+mapboxgl.accessToken = 'pk.eyJ1IjoibWlrZWxtYXJvbiIsImEiOiJjaWZlY25lZGQ2cTJjc2trbmdiZDdjYjllIn0.Wx1n0X7aeCQyDTnK6_mrGw';
 
 var map = new mapboxgl.Map({
   container: 'map',
-  style: 'mapbox://styles/mapbox/streets-v9',
+  style: 'mapbox://styles/mapbox/streets-v10',
   center: [-18.3, 37.7],
   zoom: 1
 });
