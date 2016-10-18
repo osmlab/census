@@ -2,6 +2,21 @@
 <head>
   <title>OpenStreetMap US Census</title>
   <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <meta name='twitter:site' content='@openstreetmapus' />
+  <meta property='og:site_name' content='OpenStreetMap US Census' />
+  <meta name='twitter:url' content='http://tristen.ca/hcl-picker/' />
+  <meta name='twitter:domain' content='http://tristen.ca/hcl-picker/' />
+  <meta property='og:url' content='http://tristen.ca/hcl-picker/' />
+  <meta name='twitter:title' content='OpenStreetMap US Census' />
+  <meta property='og:title' content='OpenStreetMap US Census' />
+  <meta name='twitter:description' content="We're conducting a census to answer questions that a profile on openstreetmap doesn't provide. We want to learn more about who is mapping, why they're doing it, and how we can continue to grow and nurture our community." />
+  <meta property='og:description' content="We're conducting a census to answer questions that a profile on openstreetmap doesn't provide. We want to learn more about who is mapping, why they're doing it, and how we can continue to grow and nurture our community." />
+  <meta name='twitter:image' content='https://osmlab.github.io/census/img/twitter-card.png' />
+  <meta name='st:image' content='https://osmlab.github.io/census/img/twitter-card.png' />
+  <meta property='og:image' content='https://osmlab.github.io/census/img/twitter-card.png' />
+  <meta property='og:type' content='website' />
+  <meta name='twitter:card' content='summary' />
+  <link rel='shortcut icon' href='img/favicon.png' type='image/x-icon' />
   <link href='https://fonts.googleapis.com/css?family=Work+Sans:400,700' rel='stylesheet'>
   <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.25.1/mapbox-gl.css' rel='stylesheet' />
   <link href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.3.0/mapbox-gl-geocoder.css' rel='stylesheet' />
@@ -10,7 +25,7 @@
 </head>
 <body>
 
-<header class='contain'>
+<header id='splash' class='contain'>
   <div class='limiter clearfix'>
     <div class='col6 pad2y space-bottom4'>
       <small class='space-bottom2'>
@@ -25,7 +40,9 @@
       </div>
     </div>
   </div>
-  <img src='img/splash-illustration.svg' class='pin-bottomright zneg hide-mobile' alt='' />
+
+  <div id='hearts-animation' class='pin-bottomright zneg1 hearts-animation'></div>
+  <img src='img/splash-illustration.svg' class='pin-bottomright zneg10 hide-mobile' alt='' />
 </header>
 
 <section id='survey' class='fill-white pad4y pad2x clearfix'>

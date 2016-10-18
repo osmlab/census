@@ -167,3 +167,46 @@ $(function() {
     return false;
   });
 });
+
+// Hearts animations
+var heartsContainer = document.getElementById('hearts-animation');
+var canvas = [700, 400];
+
+for (var i = 0; i < 20; i++) draw();
+
+function randomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function complete(el) {
+  heartsContainer.removeChild(el);
+  draw();
+}
+
+function draw() {
+  var heart = document.createElement('img');
+  heart.src = 'img/heart.svg';
+  heart.style.position = 'absolute';
+  heartsContainer.appendChild(heart);
+
+  // Ensure some values are re-set.
+  heart.style.opacity = 0;
+  heart.style.transform = 'translateY(0)';
+
+  heart.style.right = randomInt(0, canvas[0]);
+  heart.style.bottom = randomInt(0, canvas[1] / 2);
+  setAnimation(heart);
+}
+
+function setAnimation(el) {
+  var params = new Map();
+  params.set('el', el);
+  params.set('duration', randomInt(3000, 5000));
+  params.set('delay', randomInt(50, 100));
+  params.set('opacity', [0, 1]);
+  params.set('height', [randomInt(0, 10), 20]);
+  params.set('translateY', -400);
+  params.set('easing', 'easeInQuad');
+  params.set('complete', complete.bind(this, el));
+  animate(params);
+}
