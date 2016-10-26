@@ -76,7 +76,7 @@ map.on('load', function() {
 
 function setPopup(coords) {
   popup.setLngLat(coords)
-    .setText('Local tile set!')
+    .setText('My local tile!')
     .addTo(map);
 }
 

@@ -10,16 +10,16 @@ var AgeHandler = function(){
                  "age-45-49":0,
                  "age-50-54":0,
                  "age-55-59":0,
-                 "age-60-64":0 }
-
-  this.options = Object.keys(this.totals);
+                 "age-60-64":0,
+                 "age-65+":0}
 
   this.count = function(tileProps){
-    for(var i=0; i<this.options.length; i++){
-      if(tileProps.hasOwnProperty(this.options[i])){
-        this.totals[this.options[i]] += tileProps[this.options[i]]
+    var that = this
+    Object.keys(tileProps).forEach(function(key){
+      if(key.startsWith("age") && key != "age-undefined"){
+        that.totals[key] += tileProps[key]
       }
-    }
+    })
   }
 
   this.totalsArray = function(){
@@ -32,6 +32,7 @@ var AgeHandler = function(){
   }
 
   this.buildGraph = function(where){
+    d3.select(where).selectAll("*").remove();
     var tooltip = document.querySelector('#tooltip')
     data = this.totalsArray()
     var margin = {top: 20, right: 0, bottom: 30, left: 30},
@@ -103,11 +104,12 @@ var GenderHandler = function(){
   this.options = Object.keys(this.totals);
 
   this.count = function(tileProps){
-    for(var i=0; i<this.options.length; i++){
-      if(tileProps.hasOwnProperty(this.options[i])){
-        this.totals[this.options[i]] += tileProps[this.options[i]]
+    var that = this
+    Object.keys(tileProps).forEach(function(key){
+      if(key.startsWith('gender') && key != "gender-undefined"){
+        that.totals[key] += tileProps[key]
       }
-    }
+    })
   }
 
   this.totalsArray = function(){
@@ -120,6 +122,7 @@ var GenderHandler = function(){
   }
 
   this.buildPieChart = function(where){
+    d3.select(where).selectAll("*").remove();
     data = this.totalsArray()
     var w = 100,
         h = 100,
@@ -163,8 +166,6 @@ var GenderHandler = function(){
   }
 }
 
-
-
 var UseHandler = function(){
   this.totals = {"use-no": 0,
                  "use-yes-work": 0,
@@ -173,11 +174,13 @@ var UseHandler = function(){
   this.options = Object.keys(this.totals);
 
   this.count = function(tileProps){
-    for(var i=0; i<this.options.length; i++){
-      if(tileProps.hasOwnProperty(this.options[i])){
-        this.totals[this.options[i]] += tileProps[this.options[i]]
+    var that = this
+    Object.keys(tileProps).forEach(function(key){
+      if(key.startsWith('use') && key != "use-undefined"){
+        console.log(key)
+        that.totals[key] += tileProps[key]
       }
-    }
+    })
   }
 
   this.totalsArray = function(){
@@ -192,6 +195,7 @@ var UseHandler = function(){
   }
 
   this.buildPieChart = function(where){
+    d3.select(where).selectAll("*").remove();
     data = this.totalsArray()
     var w = 100,
         h = 100,
@@ -232,5 +236,97 @@ var UseHandler = function(){
             d3.select(this).attr('style','opacity:0.75')
             d3.select('#tooltip').style('display','none')
           });
+  }
+}
+
+var EthnicityHandler = function(){
+  this.totals = {"ethnicity-caucasian":0,
+                 "ethnicity-african-american":0,
+                 "ethnicity-native-american":0,
+                 "ethnicity-latino-hispanic":0,
+                 "ethnicity-asian":0,
+                 "ethnicity-pacific-islander":0,
+                 "ethnicity-other":0}
+
+  this.count = function(tileProps){
+    var that = this
+    Object.keys(tileProps).forEach(function(key){
+      if(key.startsWith("ethnicity") && key != "ethnicity-undefined"){
+        that.totals[key] += tileProps[key]
+      }
+    })
+  }
+
+  this.totalsArray = function(){
+    var arr = []
+    var that = this;
+    Object.keys(this.totals).forEach(function(key){
+      arr.push({label: key.substring(10,key.length), value: that.totals[key]})
+    })
+    return arr;
+  }
+
+  this.buildGraph = function(where){
+    d3.select(where).selectAll("*").remove();
+    var tooltip = document.querySelector('#tooltip')
+    data = this.totalsArray()
+    var margin = {top: 20, right: 0, bottom: 30, left: 30},
+        width = 300 - margin.left - margin.right,
+        height = 100 - margin.top - margin.bottom;
+
+    var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+    var y = d3.scale.linear().range([height, 0]);
+
+    var xAxis = d3.svg.axis()
+      .scale(x)
+      .orient("bottom")
+      .ticks(20);
+
+    var yAxis = d3.svg.axis()
+      .scale(y)
+      .orient("left")
+      .ticks(3);
+
+    var svg = d3.select(where).append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+      .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+    x.domain(data.map(function(d) { return d.label; }));
+    y.domain([0, d3.max(data, function(d) { return d.value; })]);
+
+    svg.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+      .selectAll("text")
+        .style("text-anchor", "center")
+        .attr("dx", "-.8em")
+        .attr("dy", ".25em")
+        .attr("transform", "rotate(-25)");
+
+    svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+
+    svg.selectAll("bar")
+        .data(data)
+      .enter().append("rect")
+        .attr('class','bar')
+        .attr("x", function(d) { return x(d.label); })
+        .attr("width", x.rangeBand())
+        .attr("y", function(d) { return y(d.value); })
+        .attr("height", function(d) { return height - y(d.value); })
+        .on('mouseover',function(d){
+          d3.select('#tooltip')
+            .style("display", "block")
+            .style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px")
+            .text(d.label + ": " + d.value)
+        })
+        .on('mouseout',function(e){
+          d3.select('#tooltip').style("display", "none")
+        });
   }
 }
