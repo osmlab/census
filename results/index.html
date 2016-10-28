@@ -68,7 +68,7 @@ map.on('load',function(){
     type: 'geojson',
     data: url});
 
-  //Level 1
+  // Level 1
   map.addLayer({
     "id": "results-tiles1",
     "type": "circle",
@@ -77,12 +77,12 @@ map.on('load',function(){
     "maxzoom":6,
     "paint": {
       "circle-color": color_scaler,
-      "circle-opacity": 0.8,
-      "circle-blur":0.8,
+      "circle-opacity": 0.1,
+      "circle-blur": 0.8,
       "circle-radius":{
         "stops":[
           [0,1],
-          [6,150]
+          [6,2]
         ]
       }
     },
@@ -94,7 +94,7 @@ map.on('load',function(){
     "id": "results-tiles2",
     "type": "circle",
     "source": "results",
-    "minzoom":6,
+    "minzoom":0,
     "maxzoom":7,
     "paint": {
       "circle-color": color_scaler,
@@ -102,7 +102,7 @@ map.on('load',function(){
       "circle-blur":0.6,
       "circle-radius":{
         "stops":[
-          [6,150],
+          [0,1],
           [7,200]
         ]
       }
