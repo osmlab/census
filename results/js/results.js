@@ -35,9 +35,9 @@ var AgeHandler = function(){
     d3.select(where).selectAll("*").remove();
     var tooltip = document.querySelector('#tooltip')
     data = this.totalsArray()
-    var margin = {top: 20, right: 0, bottom: 30, left: 30},
+    var margin = {top: 20, right: 0, bottom: 40, left: 30},
         width = 300 - margin.left - margin.right,
-        height = 100 - margin.top - margin.bottom;
+        height = 120 - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
     var y = d3.scale.linear().range([height, 0]);
@@ -125,7 +125,7 @@ var GenderHandler = function(){
     d3.select(where).selectAll("*").remove();
     data = this.totalsArray()
     var w = 100,
-        h = 100,
+        h = 120,
         r = 50
 
     var vis = d3.select(where)
@@ -177,7 +177,6 @@ var UseHandler = function(){
     var that = this
     Object.keys(tileProps).forEach(function(key){
       if(key.startsWith('use') && key != "use-undefined"){
-        console.log(key)
         that.totals[key] += tileProps[key]
       }
     })
@@ -198,7 +197,7 @@ var UseHandler = function(){
     d3.select(where).selectAll("*").remove();
     data = this.totalsArray()
     var w = 100,
-        h = 100,
+        h = 120,
         r = 50
 
     var vis = d3.select(where)
@@ -270,9 +269,9 @@ var EthnicityHandler = function(){
     d3.select(where).selectAll("*").remove();
     var tooltip = document.querySelector('#tooltip')
     data = this.totalsArray()
-    var margin = {top: 20, right: 0, bottom: 30, left: 30},
+    var margin = {top: 20, right: 0, bottom: 40, left: 30},
         width = 300 - margin.left - margin.right,
-        height = 100 - margin.top - margin.bottom;
+        height = 120 - margin.top - margin.bottom;
 
     var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
     var y = d3.scale.linear().range([height, 0]);
@@ -303,8 +302,8 @@ var EthnicityHandler = function(){
       .selectAll("text")
         .style("text-anchor", "center")
         .attr("dx", "-.8em")
-        .attr("dy", ".25em")
-        .attr("transform", "rotate(-25)");
+        .attr("dy", ".7em")
+        .attr("transform", "rotate(-20)");
 
     svg.append("g")
       .attr("class", "y axis")

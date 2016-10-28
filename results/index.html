@@ -77,12 +77,12 @@ map.on('load',function(){
     "maxzoom":6,
     "paint": {
       "circle-color": color_scaler,
-      "circle-opacity": 0.9,
+      "circle-opacity": 0.8,
       "circle-blur":0.8,
       "circle-radius":{
         "stops":[
           [0,1],
-          [6,100]
+          [6,150]
         ]
       }
     },
@@ -201,24 +201,17 @@ map.on('moveend', function() {
   }
 });
 
-map.on('click', function (e) {
-  if(popup){
-    popup.remove()
+map.once('load',function(){
+  if(map.getLayer('results-tile1')==undefined){
+    console.log("Not loaded... pausing for 2 seconds")
+    setTimeout(function(){
+      var features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
+      if (features) {
+        buildGraphs(features)
+      }
+    },2000)
   }
-  var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles1','results-tiles2','results-tiles3','results-tiles4'] });
-  if (!features.length) {
-      return;
-  }
-  console.log(features.length)
-  popup = new mapboxgl.Popup()
-    .setLngLat(map.unproject(e.point))
-    .setHTML(JSON.stringify(features[0]))
-    .addTo(map);
-
-});
-
-// TODO
-// When the map is loaded, populate query and RUN
+})
 </script>
 
 </body>
