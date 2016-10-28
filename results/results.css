@@ -10,7 +10,7 @@ body { margin:0; padding:0; }
   position:fixed;
   top:10px;
   left:0;
-  height:75px;
+  height:100px;
   width:100%;
   text-align:center;
 }
@@ -22,7 +22,7 @@ body { margin:0; padding:0; }
 .result{
   display:inline-block;
   margin: 0 auto;
-  height:120px;
+  height:130px;
   background-color:white;
   border-radius: 5px;
   padding: 10px;

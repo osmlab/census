@@ -4,187 +4,214 @@
     <meta charset='utf-8' />
     <title></title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
-    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.21.0/mapbox-gl.js'></script>
-    <script src="//d3js.org/d3.v3.min.js"></script>
-    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js"></script>
-    <script src='site.js'></script>
-    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.21.0/mapbox-gl.css' rel='stylesheet' />
-    <link href='site.css' rel='stylesheet' />
+    <script src="js/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.js"></script>
+    <script src="js/turf.min.js"></script>
+    <script src='js/mapbox-gl.js'></script>
+    <script src="js/results.js"></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.26.0/mapbox-gl.css' rel='stylesheet' />
+    <link href='results.css' rel='stylesheet' />
 </head>
 <body>
 
 <div id='map'></div>
 
 <div id="aggregate-results">
-  <div id='gender' class="result">
-    <h3 class="result-heading">Gender</h3>
+  <div id='gender-container' class="result">
+    <h3 class="result-heading">Gender <span id='gender-count'></span></h3>
+    <div id='gender'></div>
   </div>
-  <div id='age' class="result">
+  <div id='age-container' class="result">
     <h3 class="result-heading">Age</h3>
+    <div id='age'></div>
   </div>
-  <div id='use' class="result">
+  <div id='ethnicity-container' class="result">
+    <h3 class="result-heading">Ethnicity</h3>
+    <div id='ethnicity'></div>
+  </div>
+  <div id='use-container' class="result">
     <h3 class="result-heading">Daily OSM Use</h3>
+    <div id='use'></div>
   </div>
 </div>
 
 <h3 id='tooltip' class='d3-label-tooltip result-heading' style="position:absolute; z-index:100, display:none"></h3>
 
 <script>
+//Result Map
+
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlrZWxtYXJvbiIsImEiOiJjaWZlY25lZGQ2cTJjc2trbmdiZDdjYjllIn0.Wx1n0X7aeCQyDTnK6_mrGw';
 var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v9',
     zoom: 4,
-    minZoom:4,
-    maxZoom:7.99,
+    minZoom: 2,
+    maxZoom: 9,
     center: [-97.559, 39.368]
 });
 
+// var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
+var url = 'https://lcha07yrle.execute-api.us-east-1.amazonaws.com/api/result';
 
-var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
+// var url = 'tmp.geojson'
 
-var ageHandler = new AgeHandler();
-var genderHandler = new GenderHandler();
-var useHandler = new UseHandler();
+var color_scaler = {
+  'property':'uCount',
+  'stops':[
+    [0,'yellow'],
+    [15,'red']
+  ]
+}
 
-var request = new XMLHttpRequest();
-request.open('GET', url, true);
-request.onload = function() {
-  if (request.status >= 200 && request.status < 400) {
+map.on('load',function(){
+  map.addSource('results', {
+    type: 'geojson',
+    data: url});
 
-    var centers = {type:"FeatureCollection",features:[]}
-    var data = JSON.parse(request.responseText);
-
-    data.features.forEach(function(feat){
-      ageHandler.count(feat.properties)
-      genderHandler.count(feat.properties)
-      useHandler.count(feat.properties)
-
-      centers.features.push({
-        type:"Feature",
-        properties:{},
-        geometry: turf.center(feat).geometry
-      })
-    })
-
-    ageHandler.buildGraph('#age')
-    genderHandler.buildPieChart('#gender')
-    useHandler.buildPieChart('#use')
-
-    source = new mapboxgl.GeoJSONSource({
-      data: data
-    });
-
-    startMap(source, centers)
-
-  } else {
-    // We reached our target server, but it returned an error
-  }
-};
-request.onerror = function() {
-  // There was a connection error of some sort
-};
-request.send();
-
-function startMap(source, centers){
-
-
-  map.addSource('results', source);
-
+  //Level 1
   map.addLayer({
-    "id": "results-tiles",
-    "type": "fill",
+    "id": "results-tiles1",
+    "type": "circle",
     "source": "results",
     "minzoom":0,
-    "maxzoom":22,
+    "maxzoom":6,
     "paint": {
-      "fill-color": "#FF6666",
-      "fill-opacity": 0.01
-      // {
-      //   'stops':[
-      //     [0,0],[7.9,0.1],[8,0.5]
-      //   ]
-      // },
-      // 'fill-outline-color':'#FF6666'
-     }
-  })
-
-  map.addSource('results-circles', {
-    type: "geojson",
-    data: centers,
-    cluster: true,
-    clusterMaxZoom: 14, // Max zoom to cluster points on
-    clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
-  });
-
-  map.addLayer({
-    "id": "results-circles",
-    "type": "circle",
-    "source": "results-circles",
-    "minzoom":3,
-    "maxzoom":8,
-    "paint":{
-      "circle-radius": {
-        "stops": [
-          [3, 10],
-          [8, 40]
+      "circle-color": color_scaler,
+      "circle-opacity": 0.8,
+      "circle-blur":0.8,
+      "circle-radius":{
+        "stops":[
+          [0,1],
+          [6,150]
         ]
-      },
-      "circle-color": "#FF6666",
-      "circle-opacity": 0.5
-    }
+      }
+    },
+     "filter":['all',['>=','level',100]]
   })
-}
+
+  //Level 2
+  map.addLayer({
+    "id": "results-tiles2",
+    "type": "circle",
+    "source": "results",
+    "minzoom":6,
+    "maxzoom":7,
+    "paint": {
+      "circle-color": color_scaler,
+      "circle-opacity": 0.7,
+      "circle-blur":0.6,
+      "circle-radius":{
+        "stops":[
+          [6,150],
+          [7,200]
+        ]
+      }
+    },
+     "filter":['all',['>=','level',50],['<','level',100]]
+  })
+
+  //Level 3
+  map.addLayer({
+    "id": "results-tiles3",
+    "type": "circle",
+    "source": "results",
+    "minzoom":7,
+    "maxzoom":8,
+    "paint": {
+      "circle-color": color_scaler,
+      "circle-opacity": 0.6,
+      "circle-blur":0.5,
+      "circle-radius":{
+        "stops":[
+          [7,200],
+          [8,300]
+        ]
+      }
+    },
+     "filter":['all',['>=','level',10],['<','level',20]]
+  })
+
+  //Level 4
+  map.addLayer({
+    "id": "results-tiles4",
+    "type": "circle",
+    "source": "results",
+    "minzoom":8,
+    "maxzoom":9.01,
+    "paint": {
+      "circle-color": color_scaler,
+      "circle-opacity": 0.6,
+      "circle-blur":0.1,
+      "circle-radius":{
+        "stops":[
+          [8,300],
+          [10,350]
+        ]
+      }
+    },
+     "filter":['all',['>=','level',5],['<','level',10]]
+  })
+})
 
 var width  = 40;
 var height = 40;
-
 var popup = new mapboxgl.Popup()
 
-map.on('click', function (e) {
-  if(popup){
-    popup.remove()
+function buildGraphs(features){
+  var ids = []
+  age    = new AgeHandler()
+  gender = new GenderHandler()
+  use    = new UseHandler()
+  ethnicity = new EthnicityHandler()
+  var uCount = 0;
+  for(i in features){
+    if (features[i].properties!=undefined){
+      if(ids.indexOf(features[i].properties.id)<0){
+        uCount += features[i].properties.uCount;
+        ids.push(features[i].properties.id)
+        age.count(features[i].properties)
+        gender.count(features[i].properties)
+        use.count(features[i].properties)
+        ethnicity.count(features[i].properties)
+      }
+    }
   }
-  if(map.getZoom()<8){
-    // console.log("aggregating")
-    var features = map.queryRenderedFeatures([
-        [e.point.x - width / 2, e.point.y - height / 2],
-        [e.point.x + width / 2, e.point.y + height / 2]
-      ], { layers: ['results-tiles'] });
+  age.buildGraph('#age')
+  gender.buildPieChart('#gender')
+  ethnicity.buildGraph('#ethnicity')
+  use.buildPieChart('#use')
+
+  console.log(uCount)
+}
+
+map.on('moveend', function() {
+  var features;
+  if(map.getZoom()>8){
+    features = map.queryRenderedFeatures({ layers:['results-tiles4'] });
+  }else if(map.getZoom()>7){
+    features = map.queryRenderedFeatures({ layers:['results-tiles3'] });
+  }else if(map.getZoom()>6){
+    features = map.queryRenderedFeatures({ layers:['results-tiles2'] });
   }else{
-    // console.log('not aggregating')
-    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles'] });
-  }
-  if (!features.length) {
-      return;
-  }
-  console.log(features.length)
-
-  this_age = new AgeHandler();
-  this_gender = new GenderHandler();
-
-  for(var i=0; i< features.length; i++){
-    this_age.count(features[i].properties)
-    this_gender.count(features[i].properties)
+    features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
   }
 
-  popup = new mapboxgl.Popup()
-      .setLngLat(map.unproject(e.point))
-      .setHTML(`<div class="result" id="popup-gender">
-        <h3 class="result-heading">Gender</h3>
-        </div>
-        <div class="result" id="popup-age">
-          <h3 class="result-heading">Age</h3>
-        </div>`)
-      .addTo(map);
-  this_age.buildGraph('#popup-age')
-  this_gender.buildPieChart('#popup-gender')
+  if (features) {
+    buildGraphs(features)
+  }
 });
 
-map.on('mousemove', function (e) {
-    var features = map.queryRenderedFeatures(e.point, { layers: ['results-tiles','results-circles'] });
-    map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
-});
+map.once('load',function(){
+  if(map.getLayer('results-tile1')==undefined){
+    console.log("Not loaded... pausing for 2 seconds")
+    setTimeout(function(){
+      var features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
+      if (features) {
+        buildGraphs(features)
+      }
+    },2000)
+  }
+})
 </script>
 
 </body>
