@@ -3,9 +3,9 @@
 window.mapboxgl = require('mapbox-gl');
 require('mapbox-gl-geocoder');
 
-var tilebelt = require('tilebelt');
 var animate = require('animateplus');
 var $ = require('jquery');
+var tilebelt = require('tilebelt');
 
 /* global mapboxgl */
 mapboxgl.accessToken = 'pk.eyJ1IjoibWlrZWxtYXJvbiIsImEiOiJjaWZlY25lZGQ2cTJjc2trbmdiZDdjYjllIn0.Wx1n0X7aeCQyDTnK6_mrGw';
