@@ -150,6 +150,13 @@ $(function() {
        send[obj['name']] = obj['value'];
     });
 
+    var split = send.bbox.split(",")
+
+    send.w = split[0];
+    send.s = split[1];
+    send.e = split[2];
+    send.n = split[3];
+
     $.ajax({
       url: 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/entry',
       type: 'POST',
