@@ -133,8 +133,17 @@ $.ajaxSetup({
   dataType: 'json'
 });
 
+
 $(function() {
   var $form = $('#form');
+
+  $('#form').on('keyup keypress', function(e) {
+    var keyCode = e.keyCode || e.which;
+    if (keyCode === 13) {
+      e.preventDefault();
+      return false;
+    }
+  });
 
   $('#js-scroll-to-survey').click(function() {
     $('html,body').animate({
@@ -144,6 +153,11 @@ $(function() {
 
   $form.submit(function(e) {
     e.preventDefault();
+
+    if( $('#js-submit').hasClass("disabled") ){
+      return false
+    }
+
     $form.addClass('loading');
     var send = {};
     $form.serializeArray().forEach(function(obj) {
