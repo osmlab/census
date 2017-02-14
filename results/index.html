@@ -17,25 +17,33 @@
 <div id='map'></div>
 
 <div id="aggregate-results">
-  <div id='gender-container' class="result">
+  <div id='gender-container' class="result" style="display:none;">
     <h3 class="result-heading">Gender <span id='gender-count'></span></h3>
-    <div id='gender'></div>
+    <div id='gender'>
+      <svg id="gender-svg" />
+    </div>
   </div>
-  <div id='age-container' class="result">
+  <div id='age-container' class="result" style="display:none;">
     <h3 class="result-heading">Age</h3>
-    <div id='age'></div>
+    <div id='age'>
+      <svg id="age-svg" />
+    </div>
   </div>
-  <div id='ethnicity-container' class="result">
+  <div id='ethnicity-container' class="result" style="display:none;">
     <h3 class="result-heading">Ethnicity</h3>
-    <div id='ethnicity'></div>
+    <div id='ethnicity'>
+      <svg id="ethnicity-svg" />
+    </div>
   </div>
-  <div id='use-container' class="result">
+  <div id='use-container' class="result" style="display:none;">
     <h3 class="result-heading">Daily OSM Use</h3>
-    <div id='use'></div>
+    <div id='use'>
+      <svg id="use-svg" />
+    </div>
   </div>
 </div>
 
-<h3 id='tooltip' class='d3-label-tooltip result-heading' style="position:absolute; z-index:100, display:none"></h3>
+<h3 id='tooltip' class='d3-label-tooltip result-heading' style="position:absolute; z-index:100; display: none;"></h3>
 
 <script>
 //Result Map
@@ -153,17 +161,23 @@ map.on('load',function(){
   })
 })
 
-var width  = 40;
-var height = 40;
+//Interactivity
+var width  = 40,
+    height = 40,
+    uCount = 0,
+    ids    = [];
+
 var popup = new mapboxgl.Popup()
 
-function buildGraphs(features){
-  var ids = []
-  age    = new AgeHandler()
-  gender = new GenderHandler()
-  use    = new UseHandler()
-  ethnicity = new EthnicityHandler()
-  var uCount = 0;
+var age       = new AgeHandler(),
+    gender    = new GenderHandler(),
+    use       = new UseHandler(),
+    ethnicity = new EthnicityHandler();
+
+function count(features){
+  age.clear(); gender.clear(); use.clear(); ethnicity.clear();
+  ids = []
+  uCount = 0;
   for(i in features){
     if (features[i].properties!=undefined){
       if(ids.indexOf(features[i].properties.id)<0){
@@ -176,40 +190,52 @@ function buildGraphs(features){
       }
     }
   }
-  age.buildGraph('#age')
-  gender.buildPieChart('#gender')
-  ethnicity.buildGraph('#ethnicity')
-  use.buildPieChart('#use')
-
-  console.log(uCount)
 }
-
-map.on('moveend', function() {
-  var features;
-  if(map.getZoom()>8){
-    features = map.queryRenderedFeatures({ layers:['results-tiles4'] });
-  }else if(map.getZoom()>7){
-    features = map.queryRenderedFeatures({ layers:['results-tiles3'] });
-  }else if(map.getZoom()>6){
-    features = map.queryRenderedFeatures({ layers:['results-tiles2'] });
-  }else{
-    features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
-  }
-
-  if (features) {
-    buildGraphs(features)
-  }
-});
 
 map.once('load',function(){
   if(map.getLayer('results-tile1')==undefined){
-    console.log("Not loaded... pausing for 2 seconds")
-    setTimeout(function(){
-      var features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
-      if (features) {
-        buildGraphs(features)
+    console.log("Pausing for 1 second to let geoJSON load")
+    var interval = setInterval(function(){
+      if(map.getLayer('results-tiles1')){
+        var features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
+        if(features.length){
+          clearInterval(interval)
+          console.log("Loaded... building graphs")
+          count(features)
+          var divs = document.getElementsByClassName('result')
+          for(var i=0; i<divs.length; i++){
+            divs[i].style = "display:inline-block;"
+          }
+          age.buildGraph('#age')
+          gender.buildPieChart('#gender')
+          ethnicity.buildGraph('#ethnicity')
+          use.buildPieChart('#use')
+
+          //If it's loaded, initialize movement!
+          map.on('moveend', function() {
+            var features;
+            if(map.getZoom()>8){
+              features = map.queryRenderedFeatures({ layers:['results-tiles4'] });
+            }else if(map.getZoom()>7){
+              features = map.queryRenderedFeatures({ layers:['results-tiles3'] });
+            }else if(map.getZoom()>6){
+              features = map.queryRenderedFeatures({ layers:['results-tiles2'] });
+            }else{
+              features = map.queryRenderedFeatures({ layers:['results-tiles1'] });
+            }
+
+            count(features)
+            age.updateGraph()
+            gender.updatePieChart()
+            ethnicity.updateGraph()
+            use.updatePieChart()
+            console.log(uCount)
+          });
+        }else{
+          console.log("Still not loaded... pausing for another second")
+        }
       }
-    },2000)
+    },1000)
   }
 })
 </script>
