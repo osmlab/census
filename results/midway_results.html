@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src ='https://api.tiles.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.js'></script>
+    <link   href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+
+<body>
+<!-- With major thanks to: https://www.mapbox.com/mapbox-gl-js/example/toggle-layers/ -->
+<style>
+  #menu {
+      background: #fff;
+      position: absolute;
+      z-index: 1;
+      top: 10px;
+      right: 10px;
+      border-radius: 3px;
+      width: 120px;
+      border: 1px solid rgba(0,0,0,0.4);
+      font-family: 'Open Sans', sans-serif;
+  }
+
+  #menu a {
+      font-size: 13px;
+      color: #404040;
+      display: block;
+      margin: 0;
+      padding: 0;
+      padding: 10px;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,0,0,0.25);
+      text-align: center;
+  }
+
+  #menu a:last-child {
+      border: none;
+  }
+
+  #menu a:hover {
+      background-color: #f8f8f8;
+      color: #404040;
+  }
+
+  #menu a.active {
+      background-color: #3887be;
+      color: #ffffff;
+  }
+
+  #menu a.active:hover {
+      background: #3074a4;
+  }
+</style>
+
+<div id="map"></div>
+<nav id="menu"></nav>
+
+<script>
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiamVubmluZ3NhbmRlcnNvbiIsImEiOiIzMHZndnpvIn0.PS-j7fRK3HGU7IE8rbLT9A';
+var map = new mapboxgl.Map({
+    container: 'map',
+    zoom: 2,
+    minZoom: 1,
+    center: [-28.15,20.71],
+    style: 'mapbox://styles/mapbox/light-v9',
+    hash: true
+});
+
+var toggleableLayerIds = [ 'buildings', 'roads', 'edits','users'];
+var activeLayer = 'buildings'
+
+map.on('load', function () {
+
+  // Pull tiles from yetilabs
+  map.addSource('osm-census', {
+    type: 'vector',
+    url: 'mapbox://jenningsanderson.census_boxes_3_levels'
+    // tiles: [
+    //   'http://epic-analytics.cs.colorado.edu:5000/contributor_sum_quads_3_levels.mbtiles/{z}/{x}/{y}.pbf'
+    //   // 'http://epic-compute1.yetilabs.co:3000/contributor_sum_quads_all.mbtiles/{z}/{x}/{y}.pbf'
+    // ],
+  });
+
+  map.addLayer({
+    'id': 'buildings',
+    'type': 'fill',
+    'source': 'osm-census',
+    'source-layer':'contributor_sum_quads_all_tmpgeojsonl',
+    'type': 'fill',
+    'paint':{
+      'fill-color': 'steelblue',
+      'fill-opacity':{
+        "property": 'buildings',
+        "type":"exponential",
+        "stops": [
+          [{zoom:0,  value: 0}, 0],
+          [{zoom:0,  value: 10000}, 0.4],
+          [{zoom:0,  value: 1000000}, 0.8],
+          [{zoom:8,  value: 0}, 0],
+          [{zoom:8,  value: 100}, 0.4],
+          [{zoom:8,  value: 10000}, 0.8],
+          [{zoom:12, value: 0}, 0],
+          [{zoom:12, value: 10}, 0.4],
+          [{zoom:12, value: 100}, 0.8],
+        ]
+      }
+    },
+    'layout': {'visibility':'visible'}
+  });
+
+  map.addLayer({
+    'id': 'roads',
+    'type': 'fill',
+    'source': 'osm-census',
+    'source-layer':'contributor_sum_quads_all_tmpgeojsonl',
+    'type': 'fill',
+    'paint':{
+      'fill-color': 'darkgreen',
+      'fill-opacity':{
+        "property": 'road_km',
+        "type":"exponential",
+        "stops": [
+          [{zoom:0,  value: 0}, 0],
+          [{zoom:0,  value: 1000}, 0.4],
+          [{zoom:0,  value: 100000}, 0.8],
+          [{zoom:8,  value: 0}, 0],
+          [{zoom:8,  value: 100}, 0.4],
+          [{zoom:8,  value: 10000}, 0.8],
+          [{zoom:12, value: 0}, 0],
+          [{zoom:12, value: 10}, 0.4],
+          [{zoom:12, value: 100}, 0.8],
+        ]
+      }
+    },
+    'layout': {'visibility':'none'}
+  });
+
+  map.addLayer({
+    'id': 'edits',
+    'type': 'fill',
+    'source': 'osm-census',
+    'source-layer':'contributor_sum_quads_all_tmpgeojsonl',
+    'type': 'fill',
+    'paint':{
+      'fill-color': 'salmon',
+      'fill-opacity':{
+        "property": 'edits',
+        "type":"exponential",
+        "stops": [
+          [{zoom:0,  value: 0}, 0],
+          [{zoom:0,  value: 1000}, 0.4],
+          [{zoom:0,  value: 100000}, 0.8],
+          [{zoom:8,  value: 0}, 0],
+          [{zoom:8,  value: 100}, 0.4],
+          [{zoom:8,  value: 10000}, 0.8],
+          [{zoom:12, value: 0}, 0],
+          [{zoom:12, value: 10}, 0.4],
+          [{zoom:12, value: 100}, 0.8],
+        ]
+      }
+    },
+    'layout': {'visibility':'none'}
+  });
+
+  map.addLayer({
+    'id': 'users',
+    'type': 'fill',
+    'source': 'osm-census',
+    'source-layer':'contributor_sum_quads_all_tmpgeojsonl',
+    'type': 'fill',
+    'paint':{
+      'fill-color': 'orange',
+      'fill-opacity':{
+        "property": 'uid',
+        "type":"exponential",
+        "stops": [
+          [{zoom:0,  value: 0}, 0],
+          [{zoom:0,  value: 50}, 0.4],
+          [{zoom:0,  value: 100}, 0.8],
+          [{zoom:8,  value: 0}, 0],
+          [{zoom:8,  value: 25}, 0.4],
+          [{zoom:8,  value: 75}, 0.8],
+          [{zoom:12, value: 0}, 0],
+          [{zoom:12, value: 10}, 0.4],
+          [{zoom:12, value: 50}, 0.8],
+        ]
+      }
+    },
+    'layout': {'visibility':'none'}
+  });
+
+  for (var i = 0; i < toggleableLayerIds.length; i++) {
+    var id = toggleableLayerIds[i];
+
+    var link = document.createElement('a');
+    link.href = '#';
+    link.textContent = id;
+    link.id = id
+
+    if (id==activeLayer){
+      link.className = 'active'
+    }
+
+    link.onclick = function (e) {
+      this.className = 'active'
+      var clickedLayer = this.textContent;
+      activeLayer = clickedLayer
+      e.preventDefault();
+      e.stopPropagation();
+      for (var i = 0; i < toggleableLayerIds.length; i++) {
+        var l = toggleableLayerIds[i]
+        if (l == clickedLayer){
+          map.setLayoutProperty(l,'visibility','visible')
+        }else{
+          map.setLayoutProperty(l,'visibility','none')
+          document.getElementById(l).className = ''
+        }
+      }
+    }
+
+    var layers = document.getElementById('menu');
+    layers.appendChild(link);
+  }
+
+  map.on('mousemove', function (e) {
+      var features = map.queryRenderedFeatures(e.point, { layers: [activeLayer] });
+      map.getCanvas().style.cursor = (features.length) ? 'pointer' : '';
+  });
+
+  map.on('click', function (e) {
+    var features = map.queryRenderedFeatures(e.point, { layers: [activeLayer] });
+    if (!features.length) {return;}
+    var feature = features[0];
+
+    // Populate the popup and set its coordinates
+    // based on the feature found.
+    var popup = new mapboxgl.Popup()
+      .setLngLat(map.unproject(e.point))
+      .setHTML(makePrettyTable(feature.properties))
+      .addTo(map);
+  });
+});
+
+function makePrettyTable(properties){
+  console.log(properties)
+  return `<table>
+    <tr><td class="label">Buildings</td><td>${properties.buildings}</td></tr>
+    <tr><td class="label">Roads</td><td>${properties.road_km.toFixed(1)} km</td></tr>
+    <tr><td class="label">Edits</td><td>${properties.edits}</td></tr>
+    <tr><td class="label">Users</td><td>${properties.uid}</td></tr>
+  </table>`
+}
+
+</script>
+
+<style>
+.label{
+  font-weight:800
+}
+</style>
+
+</body>
+</html>
