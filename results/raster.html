@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.35.0/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- Use Assembly -->
+    <link href="https://api.mapbox.com/mapbox-assembly/v0.12.0/assembly.min.css" rel="stylesheet">
+    <script async defer src="https://api.mapbox.com/mapbox-assembly/v0.12.0/assembly.js"></script>
+
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.0/mapbox-gl-geocoder.min.js'></script>
+    <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v2.1.0/mapbox-gl-geocoder.css' type='text/css' />
+
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<label id='toggle-labels' class='switch-container bg-gray-dark round-bold m12 p6 color-gray-faint' style="position:absolute; z-index:100;">
+  <input type='checkbox' checked='checked' onClick="toggleLabels()"/>
+  Labels<div class='switch ml6'></div>
+</label>
+
+<div id='map'></div>
+
+<script>
+
+var labelsVisible = true
+function toggleLabels(){
+  labelsVisible = !labelsVisible
+  var layers = ['country-label-lg','country-label-md','country-label-sm',
+                'state-label-lg','state-label-md','state-label-sm',
+                'marine-label-lg-pt','marine-label-md-pt','marine-label-sm-pt',
+                'marine-label-lg-ln','marine-label-md-ln','marine-label-sm-ln',
+                'place-city-lg-n','place-city-md-n','place-city-lg-s','place-city-md-s','place-city-sm',
+                'place-island','place-village','place-town','place-hamlet','place-suburb',
+                'place-islet-archipelago-aboriginal','place-neighbourhood',
+                'airport-label','poi-scalerank1','poi-parks-scalerank1','water-label','water-label-sm',
+                'rail-label','road-label-large','road-label-medium','road-label-small','waterway-label']
+  layers.forEach(function(layerID){
+      map.setLayoutProperty(layerID,'visibility', (labelsVisible? 'visible' : 'none') )
+  })
+}
+
+mapboxgl.accessToken = 'pk.eyJ1IjoiamVubmluZ3NhbmRlcnNvbiIsImEiOiIzMHZndnpvIn0.PS-j7fRK3HGU7IE8rbLT9A';
+var map = new mapboxgl.Map({
+    container: 'map',
+    zoom: 2,
+    minZoom: 1,
+    maxZoom: 8,
+    center: [-28.15,20.71],
+    style: "mapbox://styles/jenningsanderson/cj1f8vhtx001s2sltmcqtrfzd",
+    hash: true
+});
+
+map.once('load',function(){
+  map.addLayer({
+    'id': 'osmus-census',
+    'type':'raster',
+    'source': {
+      'type': 'raster',
+      'url': 'mapbox://' + 'jenningsanderson.census-users-raster',
+      //"tiles": ["http://epic-analytics.cs.colorado.edu:9000/jennings/tileserver/census-users.tiles/{z}/{x}/{y}.png"],
+      "tileSize": 256
+    }
+  },'waterway-label');
+});
+
+class CustomAttribution{
+    onAdd(map) {
+        this._map = map;
+        this._container = document.createElement('div');
+        this._container.className = 'mapboxgl-ctrl mapboxgl-ctrl-attrib';
+        this._container.innerHTML = content;
+        return this._container;
+    }
+    onRemove() {
+        this._container.parentNode.removeChild(this._container);
+        this._map = undefined;
+    }
+}
+var content = `Made with
+  <a target="_blank" href="https://github.com/mapbox/tile-reduce">tile-reduce</a>,
+  <a target="_blank" href="https://github.com/ericfischer/datamaps">datamaps</a>, and
+  <a target="_blank" href="https://github.com/mapbox/mbutil">mb-util</a>`
+map.addControl(new CustomAttribution(content),'bottom-right')
+
+</script>
+
+</body>
+</html>
