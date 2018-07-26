@@ -33,8 +33,8 @@
         <h1>2016 OpenStreetMap US Census</h1>
       </small>
       <h2 class='space-bottom1'>Learning from &amp; growing the community</h2>
-      <p class='muted'>We're conducting a census to answer questions that a profile on openstreetmap doesn't provide. We want to learn more about who is mapping, why they're doing it, and how we can continue to grow and nurture our community.</p>
-      <button id='js-scroll-to-survey' class='button'>Complete the survey</button>
+      <p class='muted'>We conducted a census to answer questions that a profile on openstreetmap doesn't provide. We hope to learn more about who is mapping, why they're doing it, and how we can continue to grow and nurture our community.</p>
+      <!-- <button id='js-scroll-to-survey' class='button'>Complete the survey</button> -->
       <div class='space-top1'>
         <small>Read the <a href='#privacy'>privacy policy</a>.</small>
       </div>
@@ -45,7 +45,13 @@
   <img src='img/splash-illustration.svg' class='pin-bottomright zneg10 hide-mobile' alt='' />
 </header>
 
-<section id='survey' class='fill-white pad4y pad2x clearfix'>
+<section id='result' class="fill-white pad2y" style="text-align:center;">
+  <div class='limiter'>
+    <p>The census is now closed. Analysis results will be posted here as they become available.  Thank you!</p>
+  </div>
+</section>
+
+<!-- <section id='survey' class='fill-white pad4y pad2x clearfix'>
   <form id='form' method='POST' class='round-deep margin3 col6 pad4y fill-grey contain'>
     <fieldset class='pad4x'>
       <label>OSM Username</label>
@@ -137,13 +143,7 @@
       <small>Thanks for your participation in this Survey! OpenStreetMap US will use this information to conduct research on the makeup and mapping behaviors of the community.</small>
     </fieldset>
   </form>
-</section>
-
-<section id='result' class="fill-white" style="text-align:center;">
-  <a href="results/">
-    <p style="text-align:center" class="button">See census results to date</p>
-  </a>
-</section>
+</section> -->
 
 <footer id='privacy' class='fill-grey pad8y'>
   <div class='limiter'>
@@ -151,9 +151,9 @@
     <p>This privacy policy discloses the data privacy and security practices for the OSM-US Census. This privacy policy applies solely to information collected through the survey located at osmlab.github.io/census/.</p>
 
     <h4 class='space-top4'>Information Collection and Use</h4>
-    <p>We only collect the information that you have explicitly provided through the survey, we do not collect any extra information such as IP addresses or browser information. The geographic data we collect is only identifiable to the Zoom-Level 12 tile (roughly the area of a medium-sized city).</p>
+    <p>We only collected the information that you have explicitly provided through the survey, we do not collect any extra information such as IP addresses or browser information. The geographic data we collect is only identifiable to the Zoom-Level 12 tile (roughly the area of a medium-sized city).</p>
 
-    <p>The realtime results page located at <a href='https://osmlab.github.io/census/results/'>https://osmlab.github.io/census/results/</a> shows the aggregated results of the survey for the community to view. Result data is dynamically aggregated to show a minimum of two users for any given area so that no single user’s information is ever presented in detail. In areas where only one user has responded to the survey, data is aggregated to 200 miles.</p>
+    <!-- <p>The realtime results page located at <a href='https://osmlab.github.io/census/results/'>https://osmlab.github.io/census/results/</a> shows the aggregated results of the survey for the community to view. Result data is dynamically aggregated to show a minimum of two users for any given area so that no single user’s information is ever presented in detail. In areas where only one user has responded to the survey, data is aggregated to 200 miles.</p> -->
 
     <p>OpenStreetMap US will use this information to conduct research on the makeup and mapping behaviors of the community. This will be done in partnership with academic and community research partners.</p>
 
@@ -164,7 +164,7 @@
 
     <h4 class='space-top4'>Contact</h4>
     <p>If you expressed interest in participating in a larger demographics survey, we may contact you through the openstreetmap.org messages platform. </p>
-    <p>Please concact <a href="mailto:census@openstreetmap.us">census@openstreetmap.us</a> with any comments, questions, or concerns about this work.  Thank You!</p>
+    <p>Please contact <a href="mailto:census@openstreetmap.us">census@openstreetmap.us</a> with any comments, questions, or concerns about this work.  Thank You!</p>
   </div>
 </footer>
 
