@@ -54,12 +54,12 @@ var map = new mapboxgl.Map({
     style: 'mapbox://styles/mapbox/streets-v9',
     zoom: 4,
     minZoom: 2,
-    maxZoom: 9,
+    maxZoom: 5,
+    hash: true,
     center: [-97.559, 39.368]
 });
 
-// var url = 'https://osw5bpi3jg.execute-api.us-east-1.amazonaws.com/api/result';
-var url = 'https://lcha07yrle.execute-api.us-east-1.amazonaws.com/api/result';
+var url = 'aggregated-results.geojson'
 
 // var url = 'tmp.geojson'
 
@@ -152,12 +152,12 @@ map.on('load',function(){
       "circle-blur":0.1,
       "circle-radius":{
         "stops":[
-          [8,300],
-          [10,350]
+          [8,200],
+          [10,250]
         ]
       }
     },
-     "filter":['all',['>=','level',5],['<','level',10]]
+     "filter":['all',['>=','level',0],['<','level',10]]
   })
 })
 
